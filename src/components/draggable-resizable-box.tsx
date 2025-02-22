@@ -1,7 +1,8 @@
-import {useDraggable} from "@dnd-kit/core";
-import {CircleX, GripVertical, Scaling} from "lucide-react";
-import React, {useCallback, useMemo, useRef, useState} from "react";
-import {Button} from "@/components/ui/button";
+import { useDraggable } from "@dnd-kit/core";
+import { CircleX, GripVertical, Scaling } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { useDebouncedCallback } from "use-debounce"; // Import useDebouncedCallback
 
 export interface BoxPosition {
     x: number;
@@ -17,7 +18,6 @@ export interface DraggableResizableBoxProps {
     id: string;
     position: BoxPosition;
     size: BoxSize;
-    onUpdatePosition: (newPosition: BoxPosition) => void;
     onUpdateSize: (newSize: BoxSize) => void;
     onDelete: () => void;
     children: React.ReactNode;
@@ -31,70 +31,76 @@ const MIN_HEIGHT = 60;
 const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
                                                                          id,
                                                                          position,
-                                                                         onUpdatePosition,
                                                                          size,
                                                                          onUpdateSize,
                                                                          onDelete,
                                                                          children,
-                                                                         zIndex,
-    className
+                                                                         zIndex = 0,
+                                                                         className = "",
                                                                      }) => {
     const [isResizing, setIsResizing] = useState(false);
-    const offsetRef = useRef<{ x: number; y: number }>({x: 0, y: 0});
+    const [localSize, setLocalSize] = useState(size);
 
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({
-        id,
-    });
+    const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
-    const computedTransform = useMemo(() => {
-        return transform && !isResizing
-            ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-            : "";
-    }, [transform, isResizing]);
+    const computedTransform = useMemo(
+        () =>
+            transform && !isResizing
+                ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+                : "",
+        [transform, isResizing]
+    );
 
     const boxStyle: React.CSSProperties = useMemo(
         () => ({
             position: "absolute",
             top: position.y,
             left: position.x,
-            width: size.width,
-            height: size.height,
+            width: localSize.width,
+            height: localSize.height,
             transform: computedTransform,
-            zIndex: zIndex || 0,
+            zIndex,
             transition: "none",
         }),
-        [position, size, computedTransform]
+        [position, localSize, computedTransform, zIndex]
+    );
+
+    // Debounced version of onUpdateSize
+    const debouncedUpdateSize = useDebouncedCallback(
+        (newSize: BoxSize) => {
+            onUpdateSize(newSize);
+        },
+        200
     );
 
     const handleResizeStart = useCallback(
         (e: React.MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
             setIsResizing(true);
-            offsetRef.current = transform
-                ? {x: transform.x, y: transform.y}
-                : {x: 0, y: 0};
 
             const startX = e.clientX;
             const startY = e.clientY;
-            const startWidth = size.width;
-            const startHeight = size.height;
+            const startWidth = localSize.width;
+            const startHeight = localSize.height;
 
             const onMouseMove = (moveEvent: MouseEvent) => {
-                const newWidth = startWidth + (moveEvent.clientX - startX);
-                const newHeight = startHeight + (moveEvent.clientY - startY);
-                onUpdateSize({
-                    width: Math.max(newWidth, MIN_WIDTH),
-                    height: Math.max(newHeight, MIN_HEIGHT),
-                });
+                const newWidth = Math.max(
+                    startWidth + (moveEvent.clientX - startX),
+                    MIN_WIDTH
+                );
+                const newHeight = Math.max(
+                    startHeight + (moveEvent.clientY - startY),
+                    MIN_HEIGHT
+                );
+
+                const newSize = { width: newWidth, height: newHeight };
+                setLocalSize(newSize);
+                debouncedUpdateSize(newSize);
             };
 
             const onMouseUp = () => {
-                onUpdatePosition({
-                    x: position.x + offsetRef.current.x,
-                    y: position.y + offsetRef.current.y,
-                });
                 setIsResizing(false);
-                offsetRef.current = {x: 0, y: 0};
+                debouncedUpdateSize.flush();
 
                 document.removeEventListener("mousemove", onMouseMove);
                 document.removeEventListener("mouseup", onMouseUp);
@@ -103,7 +109,7 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
             document.addEventListener("mousemove", onMouseMove);
             document.addEventListener("mouseup", onMouseUp);
         },
-        [transform, size.width, size.height, onUpdateSize, onUpdatePosition, position.x, position.y]
+        [localSize, debouncedUpdateSize]
     );
 
     return (
@@ -114,6 +120,7 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
             {...attributes}
         >
             <div className={`${className}`}>{children}</div>
+
             <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
                     variant="ghost"
@@ -123,6 +130,7 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
                 >
                     <GripVertical />
                 </Button>
+
                 <Button
                     variant="ghost"
                     size="icon"
@@ -132,14 +140,15 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
                         onDelete();
                     }}
                 >
-                    <CircleX/>
+                    <CircleX />
                 </Button>
             </div>
+
             <div
                 onMouseDown={handleResizeStart}
                 className="absolute right-1 bottom-1 m-1 cursor-se-resize opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
             >
-                <Scaling size={15}/>
+                <Scaling size={15} />
             </div>
         </div>
     );

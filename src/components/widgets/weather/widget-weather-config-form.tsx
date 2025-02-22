@@ -1,4 +1,3 @@
-// components/widgets/weather/widget-weather-config-form.tsx
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +15,9 @@ import { Button } from "@/components/ui/button";
 import WidgetBaseConfigForm, {
     baseFormSchema,
 } from "@/components/widgets/base/widget-base-config-form";
-import { defaultWeatherConfig } from "@/components/widgets/weather/widget-weather";
-import CityAutocomplete, {City} from "@/components/inputs/city-autocomplete";
+import CityAutocomplete, { City } from "@/components/inputs/city-autocomplete";
+import {defaultWeatherData, WidgetWeatherData} from "@/components/widgets/weather/widget-weather";
+import {Switch} from "@/components/ui/switch";
 
 const weatherSchema = z.object({
     city: z.object({
@@ -25,27 +25,30 @@ const weatherSchema = z.object({
         country: z.string(),
         latitude: z.number(),
         longitude: z.number(),
-    })
+        postcodes: z.array(z.string()).optional(),
+    }),
+    displayCity: z.boolean().optional(),
 });
 
 export const combinedSchema = baseFormSchema.merge(weatherSchema);
-export type WidgetWeatherConfig = z.infer<typeof combinedSchema>;
+export type WidgetWeatherFormData = z.infer<typeof combinedSchema>;
 
 export interface WidgetWeatherConfigFormProps {
-    config?: WidgetWeatherConfig;
-    onSubmit: (data: WidgetWeatherConfig) => void;
+    data: WidgetWeatherData;
+    onSubmit: (data: WidgetWeatherData) => void;
 }
 
 const WidgetWeatherConfigForm: React.FC<WidgetWeatherConfigFormProps> = ({
-                                                                             config,
+                                                                             data,
                                                                              onSubmit,
                                                                          }) => {
-    const defaultValues: WidgetWeatherConfig = config ?? {
-        ...defaultWeatherConfig,
-        city: defaultWeatherConfig.city
+    const defaultValues: WidgetWeatherFormData = {
+        ...data,
+        city: data.city || defaultWeatherData.city || { name: "", country: "", latitude: 0, longitude: 0 },
+        displayCity: data.displayCity ?? defaultWeatherData.displayCity,
     };
 
-    const methods = useForm<WidgetWeatherConfig>({
+    const methods = useForm<WidgetWeatherFormData>({
         resolver: zodResolver(combinedSchema),
         defaultValues,
     });
@@ -54,7 +57,12 @@ const WidgetWeatherConfigForm: React.FC<WidgetWeatherConfigFormProps> = ({
         <FormProvider {...methods}>
             <Form {...methods}>
                 <form
-                    onSubmit={methods.handleSubmit(onSubmit)}
+                    onSubmit={methods.handleSubmit((formData) => {
+                        onSubmit({
+                            ...data,
+                            ...formData, // Met à jour les données du widget
+                        });
+                    })}
                     className="space-y-4"
                 >
                     <WidgetBaseConfigForm />
@@ -68,13 +76,36 @@ const WidgetWeatherConfigForm: React.FC<WidgetWeatherConfigFormProps> = ({
                                 <FormControl>
                                     <CityAutocomplete
                                         value={field.value}
-                                        onSelect={(data: City) => {
-                                            methods.setValue("city", data);
+                                        onSelect={(city: City) => {
+                                            methods.setValue("city", city);
                                         }}
                                     />
                                 </FormControl>
                                 <FormDescription>
                                     Select the city you want to display the weather for.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Show Current Weather */}
+                    <FormField
+                        control={methods.control}
+                        name="displayCity"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className='mr-2'>Show City Name</FormLabel>
+                                <FormControl>
+                                    <Switch
+                                        checked={field.value}
+                                        onCheckedChange={(checked) =>
+                                            methods.setValue("displayCity", checked)
+                                        }
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Toggle to show or hide the city name.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

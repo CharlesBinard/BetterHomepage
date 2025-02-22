@@ -1,4 +1,5 @@
-// WidgetBookmarkConfigForm.tsx
+"use client";
+
 import React from "react";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import WidgetBaseConfigForm, {
     baseFormSchema,
 } from "@/components/widgets/base/widget-base-config-form";
-import {defaultBookmarkConfig} from "@/components/widgets/bookmark/widget-bookmark";
+import {WidgetBookmarkData} from "@/components/widgets/bookmark/widget-bookmark";
 
 const bookmarkItemSchema = z.object({
     text: z.string().min(1, "Required minimum 1 character"),
@@ -33,22 +34,24 @@ const bookmarksSchema = z.object({
 });
 
 export const combinedSchema = baseFormSchema.merge(bookmarksSchema);
-export type WidgetBookmarkConfig = z.infer<typeof combinedSchema>;
+export type WidgetBookmarkFormData = z.infer<typeof combinedSchema>;
 
 export interface WidgetBookmarkConfigFormProps {
-    config?: WidgetBookmarkConfig;
-    onSubmit: (data: WidgetBookmarkConfig) => void;
+    data: WidgetBookmarkData;
+    onSubmit: (data: WidgetBookmarkData) => void
 }
 
 const WidgetBookmarkConfigForm: React.FC<WidgetBookmarkConfigFormProps> = ({
-                                                                               config,
+                                                                               data,
                                                                                onSubmit,
                                                                            }) => {
-    const defaultValues: WidgetBookmarkConfig = config ?? {
-        ...defaultBookmarkConfig
+    const defaultValues: WidgetBookmarkFormData = {
+        ...data,
+        bookmarks: data.bookmarks,
+        bookmarksContainerClassName: data.bookmarksContainerClassName,
     };
 
-    const methods = useForm<WidgetBookmarkConfig>({
+    const methods = useForm<WidgetBookmarkFormData>({
         resolver: zodResolver(combinedSchema),
         defaultValues,
     });
@@ -61,7 +64,15 @@ const WidgetBookmarkConfigForm: React.FC<WidgetBookmarkConfigFormProps> = ({
     return (
         <FormProvider {...methods}>
             <Form {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                    onSubmit={methods.handleSubmit((formData) => {
+                        onSubmit({
+                            ...data,
+                            ...formData, // Met à jour les données du widget
+                        });
+                    })}
+                    className="space-y-4"
+                >
                     <WidgetBaseConfigForm />
 
                     <FormField
@@ -160,7 +171,7 @@ const WidgetBookmarkConfigForm: React.FC<WidgetBookmarkConfigFormProps> = ({
                         </div>
                     ))}
 
-                    <div className='flex justify-between'>
+                    <div className="flex justify-between">
                         <Button
                             type="button"
                             onClick={() =>

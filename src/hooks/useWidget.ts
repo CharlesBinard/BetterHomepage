@@ -1,121 +1,134 @@
 "use client";
 
 import {useCallback, useEffect, useRef, useState} from "react";
-import {DragEndEvent} from "@dnd-kit/core";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {BoxPosition, BoxSize} from "@/components/draggable-resizable-box";
-import {WidgetConfig, WidgetData, WidgetType} from "@/components/widgets/widget-types";
+import {DEFAULT_WIDGET_CONFIGS} from "@/components/widgets/widget-constants";
+import {WidgetData, WidgetType} from "@/components/widgets/widget-types";
 
+const LOCAL_STORAGE_KEY = "widgets-data-dashboard";
 
-const LOCAL_STORAGE_KEY = "myDraggableWidgets";
+const fetchWidgetsData = async (): Promise<WidgetData[]> => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (error) {
+            console.error("Error parsing localStorage:", error);
+            return [];
+        }
+    }
+    return [];
+};
 
 const useWidget = () => {
-    const [widgetsData, setWidgetsData] = useState<WidgetData[]>([]);
+    const queryClient = useQueryClient();
     const saveTimeout = useRef<number | null>(null);
     const nextWidgetId = useRef(0);
+    const [localWidgetsData, setLocalWidgetsData] = useState<WidgetData[]>([]);
+
+    const { data: initialWidgetsData = [] } = useQuery({
+        queryKey: [LOCAL_STORAGE_KEY],
+        queryFn: async () => fetchWidgetsData(),
+        staleTime: Infinity,
+        refetchOnWindowFocus: false,
+    });
 
     useEffect(() => {
-        const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (saved) {
-            try {
-                const parsedWidgets = JSON.parse(saved) as WidgetData[];
-                setWidgetsData(parsedWidgets);
-                nextWidgetId.current = parsedWidgets.reduce((max, widget) => {
-                    const idNumber = parseInt(widget.id.split("-")[1], 10) || 0;
-                    return Math.max(max, idNumber);
-                }, 0);
-            } catch (error) {
-                console.error("Erreur lors du parsing du localStorage :", error);
-            }
+        setLocalWidgetsData(initialWidgetsData);
+    }, [initialWidgetsData]);
+
+    useEffect(() => {
+        if (localWidgetsData.length > 0) {
+            nextWidgetId.current = localWidgetsData.reduce((max, widget) => {
+                const idNumber = parseInt(widget.id.split("-")[1], 10) || 0;
+                return Math.max(max, idNumber);
+            }, 0);
         }
-    }, []);
-
-    const saveWidgets = useCallback((newWidgets: WidgetData[]) => {
-        if (saveTimeout.current) clearTimeout(saveTimeout.current);
-        saveTimeout.current = window.setTimeout(() => {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newWidgets));
-        }, 300);
-    }, []);
+    }, [localWidgetsData]);
 
     useEffect(() => {
-        saveWidgets(widgetsData);
-    }, [widgetsData, saveWidgets]);
+        if (saveTimeout.current) {
+            clearTimeout(saveTimeout.current);
+        }
+        saveTimeout.current = window.setTimeout(() => {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(localWidgetsData));
+        }, 300);
+    }, [localWidgetsData]);
 
-    const addWidget = useCallback((type: WidgetType) => {
-        nextWidgetId.current += 1;
-        const newWidgetId = `widget-${nextWidgetId.current}`;
+    const addWidget = useCallback(
+        (type: WidgetType) => {
+            nextWidgetId.current += 1;
+            const newWidgetId = `widget-${nextWidgetId.current}`;
 
-        const newWidget: WidgetData = {
-            id: newWidgetId,
-            position: { x: 50, y: 50 },
-            size: { width: 150, height: 150 },
-            type
-        };
+            const newWidgetData: WidgetData = {
+                ...DEFAULT_WIDGET_CONFIGS[type].defaultData,
+                id: newWidgetId,
+            };
 
-        setWidgetsData((prev) => [...prev, newWidget]);
-    }, []);
+            setLocalWidgetsData((oldData) =>
+                oldData ? [...oldData, newWidgetData] : [newWidgetData]
+            );
+        },
+        []
+    );
 
     const updateWidgetPosition = useCallback(
         (id: string, pos: BoxPosition) => {
-            setWidgetsData((prev) =>
-                prev.map((w) => (w.id === id ? { ...w, position: pos } : w))
-            );
+            updateWidget(id, (widget) => ({ ...widget, position: pos }));
         },
         []
     );
 
     const updateWidgetSize = useCallback(
         (id: string, size: BoxSize) => {
-            setWidgetsData((prev) =>
-                prev.map((w) => (w.id === id ? { ...w, size } : w))
-            );
+            updateWidget(id, (widget) => ({ ...widget, size }));
         },
         []
     );
 
-    const updateWidgetConfig = useCallback(
-        (id: string, newConfig: WidgetConfig) => {
-            setWidgetsData((prev) =>
-                prev.map((w) => (w.id === id ? { ...w, config: newConfig } : w))
-            );
+    const updateWidgetData = useCallback(
+        (id: string, newData: WidgetData) => {
+            updateWidget(id, () => newData);
         },
         []
     );
 
-    const deleteWidget = useCallback((id: string) => {
-        setWidgetsData((prev) => prev.filter((w) => w.id !== id));
-    }, []);
+    const updateWidget = (id: string, updater: (widget: WidgetData) => WidgetData) => {
+        setLocalWidgetsData((oldData) =>
+            oldData.map((widget) => (widget.id === id ? updater(widget) : widget))
+        );
+    };
+
+
+    const deleteWidget = useCallback(
+        (id: string) => {
+            setLocalWidgetsData((oldData) => {
+                if (!oldData) return [];
+                return oldData.filter((w) => w.id !== id);
+            });
+        },
+        []
+    );
 
     const getWidgetById = useCallback(
-        (id: string) => widgetsData.find((w) => w.id === id) || null,
-        [widgetsData]
+        (id: string) => localWidgetsData.find((w) => w.id === id) || null,
+        [localWidgetsData]
     );
 
-    const handleDragEnd = useCallback((event: DragEndEvent) => {
-        const widgetId = event.active.id as string;
-        setWidgetsData((prev) =>
-            prev.map((w) =>
-                w.id === widgetId
-                    ? {
-                        ...w,
-                        position: {
-                            x: w.position.x + event.delta.x,
-                            y: w.position.y + event.delta.y,
-                        },
-                    }
-                    : w
-            )
-        );
-    }, []);
+
+    useEffect(() => {
+        queryClient.setQueryData<WidgetData[]>([LOCAL_STORAGE_KEY], localWidgetsData);
+    }, [localWidgetsData, queryClient]);
 
     return {
-        widgetsData,
-        addWidget,
-        updateWidgetPosition,
-        updateWidgetSize,
-        updateWidgetConfig,
-        deleteWidget,
-        handleDragEnd,
+        widgetsData: localWidgetsData,
         getWidgetById,
+        addWidget,
+        deleteWidget,
+        updateWidgetSize,
+        updateWidgetPosition,
+        updateWidgetData,
     };
 };
 

@@ -1,34 +1,26 @@
 // Widget.tsx
 import React, { memo } from "react";
-import WidgetWeather, {WidgetWeatherProps} from "@/components/widgets/weather/widget-weather";
-import WidgetIframe, {WidgetIframeProps} from "@/components/widgets/iframe/widget-iframe";
-import WidgetBookmark, {WidgetBookmarkProps} from "@/components/widgets/bookmark/widget-bookmark";
-import { WidgetType } from "@/components/widgets/widget-types";
+import WidgetWeather from "@/components/widgets/weather/widget-weather";
+import WidgetIframe from "@/components/widgets/iframe/widget-iframe";
+import WidgetBookmark from "@/components/widgets/bookmark/widget-bookmark";
+import { WidgetType, CommonWidgetProps, WidgetData } from "@/components/widgets/widget-types";
 
-
-export type WidgetProps = WidgetWeatherProps | WidgetIframeProps | WidgetBookmarkProps;
-
-const isWeatherWidget = (props: WidgetProps): props is WidgetWeatherProps =>{
-    return props.data.type === WidgetType.WEATHER;
-}
-
-const isBookmarkWidget = (props: WidgetProps): props is WidgetBookmarkProps => {
-    return props.data.type === WidgetType.BOOKMARK;
-}
-
-const isIframeWidget = (props: WidgetProps): props is WidgetIframeProps  =>{
-    return props.data.type === WidgetType.IFRAME;
+export interface WidgetProps extends CommonWidgetProps {
+    data: WidgetData;
 }
 
 const Widget = memo((props: WidgetProps) => {
-    if (isWeatherWidget(props)) {
-        return <WidgetWeather {...props} />;
-    } else if (isBookmarkWidget(props)) {
-        return <WidgetBookmark {...props} />;
-    } else if (isIframeWidget(props)) {
-        return <WidgetIframe {...props} />;
+    const { data } = props;
+    switch (data.type) {
+        case WidgetType.WEATHER:
+            return <WidgetWeather {...props} data={data} />;
+        case WidgetType.BOOKMARK:
+            return <WidgetBookmark {...props} data={data} />;
+        case WidgetType.IFRAME:
+            return <WidgetIframe {...props} data={data} />;
+        default:
+            return null;
     }
-    return null;
 });
 
 Widget.displayName = "Widget";

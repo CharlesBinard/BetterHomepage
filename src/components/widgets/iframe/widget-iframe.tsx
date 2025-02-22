@@ -1,54 +1,91 @@
 "use client";
 
-import React from "react";
-import WidgetBase, {defaultBaseConfig} from "@/components/widgets/base/widget-base";
-import {CommonWidgetProps, WidgetData, WidgetType} from "@/components/widgets/widget-types";
-import WidgetIframeConfigForm, {WidgetIframeConfig} from "@/components/widgets/iframe/widget-iframe-config-from";
+import React, {HTMLAttributeReferrerPolicy, useState} from "react";
+import WidgetBase, { defaultBaseData, WidgetDataBase } from "@/components/widgets/base/widget-base";
+import { CommonWidgetProps, WidgetType } from "@/components/widgets/widget-types";
+import WidgetIframeConfigForm from "@/components/widgets/iframe/widget-iframe-config-from";
 import useWidgetConfigDialog from "@/hooks/useWidgetConfigDialog";
 
-export interface WidgetIframeProps extends CommonWidgetProps {
-    data: WidgetData<WidgetIframeConfig> & { type: WidgetType.IFRAME };
-    onUpdateConfig: (id: string, config: WidgetIframeConfig) => void;
+export interface WidgetIframeData extends WidgetDataBase {
+    type: WidgetType.IFRAME;
+    url?: string;
+    iframeClassName?: string;
+    sandbox?: string;
+    allow?: string;
+    loading?: "lazy" | "eager";
+    referrerPolicy?: HTMLAttributeReferrerPolicy;
 }
 
-export const defaultIframeConfig: WidgetIframeConfig = {
-    ...defaultBaseConfig,
+export interface WidgetIframeProps extends CommonWidgetProps {
+    data: WidgetIframeData;
+}
+
+export const defaultIframeData: WidgetIframeData = {
+    ...defaultBaseData,
+    size: {
+        width: 500,
+        height: 500,
+    },
+    type: WidgetType.IFRAME,
     url: "https://www.google.com",
-    iframeClassName: "rounded-lg"
+    className: "shadow-xl rounded-2xl w-full h-full text-white",
+    iframeClassName: "rounded-2xl",
+    sandbox: "allow-scripts allow-same-origin",
+    allow: "fullscreen",
+    loading: "lazy",
+    referrerPolicy: "no-referrer",
 };
 
 const WidgetIframe: React.FC<WidgetIframeProps> = ({
                                                        data,
-                                                       onUpdateConfig,
+                                                       onUpdateData,
                                                        ...rest
                                                    }) => {
+    const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+    const [isLoading, setIsLoading] = useState(true);
 
-    const {WidgetConfigDialog, closeDialog} = useWidgetConfigDialog();
-
-    const config = {
-        ...defaultIframeConfig,
-        ...data.config,
-    }
+    const handleIframeLoad = () => {
+        setIsLoading(false);
+    };
 
     return (
         <WidgetBase data={data} {...rest}>
+            {/* Configuration Dialog */}
             <WidgetConfigDialog type={WidgetType.IFRAME}>
                 <WidgetIframeConfigForm
-                    config={config}
-                    onSubmit={(newConfig) => {
-                        console.log(newConfig);
-                        onUpdateConfig(data.id, newConfig);
+                    data={data}
+                    onSubmit={(newData) => {
+                        onUpdateData(data.id, newData);
                         closeDialog();
                     }}
                 />
             </WidgetConfigDialog>
 
-            <iframe
-                src={config.url}
-                className={`w-full h-full ${config.iframeClassName}`}
-                title="Widget Iframe"
-                seamless
-            />
+            {/* iFrame Content */}
+            <div className="relative w-full h-full">
+                {isLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                        <p className="text-sm text-gray-500">Loading...</p>
+                    </div>
+                )}
+
+                {data.url ? (
+                    <iframe
+                        src={data.url}
+                        className={`w-full h-full ${data.iframeClassName}`}
+                        title="Widget Iframe"
+                        sandbox={data.sandbox}
+                        allow={data.allow}
+                        loading={data.loading}
+                        referrerPolicy={data.referrerPolicy}
+                        onLoad={handleIframeLoad}
+                    />
+                ) : (
+                    <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <p className="text-sm text-gray-500">No URL selected</p>
+                    </div>
+                )}
+            </div>
         </WidgetBase>
     );
 };

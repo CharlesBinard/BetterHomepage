@@ -1,54 +1,63 @@
-// WidgetBookmark.tsx
+"use client";
+
 import React from "react";
-import WidgetBase, {defaultBaseConfig} from "@/components/widgets/base/widget-base";
-import {CommonWidgetProps, WidgetData, WidgetType} from "@/components/widgets/widget-types";
-import WidgetBookmarkConfigForm, {
-    WidgetBookmarkConfig,
-} from "@/components/widgets/bookmark/widget-bookmark-config-form";
+import WidgetBase, {defaultBaseData, WidgetDataBase} from "@/components/widgets/base/widget-base";
+import { CommonWidgetProps, WidgetType } from "@/components/widgets/widget-types";
+import WidgetBookmarkConfigForm from "@/components/widgets/bookmark/widget-bookmark-config-form";
 import useWidgetConfigDialog from "@/hooks/useWidgetConfigDialog";
 
-export interface WidgetBookmarkProps extends CommonWidgetProps {
-    data: WidgetData<WidgetBookmarkConfig> & { type: WidgetType.BOOKMARK };
-    onUpdateConfig: (id: string, config: WidgetBookmarkConfig) => void;
+export interface WidgetBookmarkData extends WidgetDataBase {
+    type: WidgetType.BOOKMARK;
+    bookmarks: {
+        text: string;
+        url: string;
+        logo?: string;
+    }[];
+    bookmarksContainerClassName?: string;
 }
 
-export const defaultBookmarkConfig: WidgetBookmarkConfig = {
-    ...defaultBaseConfig,
-    bookmarksContainerClassName: "flex flex-col gap-2",
+export interface WidgetBookmarkProps extends CommonWidgetProps {
+    data: WidgetBookmarkData;
+}
+
+export const defaultBookmarkData: WidgetBookmarkData= {
+    ...defaultBaseData,
+    type: WidgetType.BOOKMARK,
+    size: {
+        width: 200,
+        height: 70,
+    },
     bookmarks: [
         {
-            text: "Google",
-            url: "https://google.com",
-            logo: "",
-        },
-    ],
+            text: "google",
+            url: 'https://www.google.com'
+        }
+    ]
 };
+
 
 const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
                                                            data,
-                                                           onUpdateConfig,
+                                                           onUpdateData,
                                                            ...rest
                                                        }) => {
-    const {WidgetConfigDialog, closeDialog} = useWidgetConfigDialog();
-    const config: WidgetBookmarkConfig = {
-        ...defaultBookmarkConfig,
-        ...data.config,
-    };
+    const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+
 
     return (
         <WidgetBase data={data} {...rest}>
             <WidgetConfigDialog type={WidgetType.BOOKMARK}>
                 <WidgetBookmarkConfigForm
-                    config={config}
-                    onSubmit={(newConfig) => {
-                        onUpdateConfig(data.id, newConfig);
+                    data={data}
+                    onSubmit={(newData) => {
+                        onUpdateData(data.id, newData);
                         closeDialog();
                     }}
                 />
             </WidgetConfigDialog>
 
-            <div className={config.bookmarksContainerClassName}>
-                {config.bookmarks.map((bookmark, index) => (
+            <div className={data.bookmarksContainerClassName || "flex flex-col gap-2"}>
+                {data.bookmarks.map((bookmark, index) => (
                     <a
                         key={index}
                         href={bookmark.url}
@@ -62,8 +71,8 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
                             className="w-6 h-6"
                         />
                         <span className="text-sm text-gray-900 dark:text-gray-100">
-              {bookmark.text}
-            </span>
+                            {bookmark.text}
+                        </span>
                     </a>
                 ))}
             </div>

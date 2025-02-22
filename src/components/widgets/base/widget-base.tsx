@@ -1,36 +1,43 @@
 // widget-base.tsx
 import React, { useCallback } from "react";
-import DraggableResizableBox, { BoxPosition, BoxSize } from "@/components/draggable-resizable-box";
+import DraggableResizableBox, {BoxPosition, BoxSize} from "@/components/draggable-resizable-box";
 import {WidgetProps} from "@/components/widgets/widget";
 
-export interface WidgetBaseConfig {
+export interface WidgetDataBase {
+    id: string;
+    size: BoxSize;
+    position: BoxPosition;
     className?: string;
     zIndex?: number;
 }
 
 export interface WidgetBaseProps
-    extends Omit<WidgetProps, "onUpdateConfig"> {
+    extends Omit<WidgetProps, "onUpdateData"> {
     children: React.ReactNode;
 }
 
-export const defaultBaseConfig: WidgetBaseConfig = {
-    "className": "flex flex-col  justify-center items-center h-full w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm",
+export const defaultBaseData: WidgetDataBase = {
+    id: '0',
+    size: {
+        height: 150,
+        width: 150,
+    },
+    position: {
+        x: 50,
+        y: 50,
+    },
+    className: "h-full w-full",
     zIndex: 1,
 };
 
 const WidgetBase = ({
                         children,
                         data,
-                        onUpdatePosition,
                         onUpdateSize,
                         onDelete,
                     }: WidgetBaseProps) => {
-    const handleUpdatePosition = useCallback(
-        (newPos: BoxPosition) => {
-            onUpdatePosition(data.id, newPos);
-        },
-        [data.id, onUpdatePosition]
-    );
+
+    const mergedData = { ...defaultBaseData, ...data };
 
     const handleUpdateSize = useCallback(
         (newSize: BoxSize) => {
@@ -39,22 +46,15 @@ const WidgetBase = ({
         [data.id, onUpdateSize]
     );
 
-    const config = {
-        ...defaultBaseConfig,
-        ...data.config,
-    }
-
-
     return (
         <DraggableResizableBox
-            id={data.id}
-            position={data.position}
-            size={data.size}
-            onUpdatePosition={handleUpdatePosition}
+            id={mergedData.id}
+            position={mergedData.position}
+            size={mergedData.size}
             onUpdateSize={handleUpdateSize}
-            onDelete={() => onDelete(data.id)}
-            zIndex={config?.zIndex}
-            className={`${config?.className}`}
+            onDelete={() => onDelete(mergedData.id)}
+            zIndex={mergedData?.zIndex}
+            className={`${data?.className}`}
         >
             {children}
         </DraggableResizableBox>

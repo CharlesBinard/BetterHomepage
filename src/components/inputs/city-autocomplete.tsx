@@ -6,6 +6,7 @@ export interface City {
     latitude: number;
     longitude: number;
     country: string;
+    postcodes?: string[];
 }
 
 interface CityAutocompleteProps {
@@ -13,18 +14,21 @@ interface CityAutocompleteProps {
     onSelect: (data: City) => void;
 }
 
-const CityAutocomplete = ({
-                              value,
-                              onSelect,
-                          }: CityAutocompleteProps) => {
+const CityAutocomplete: React.FC<CityAutocompleteProps> = ({ value, onSelect }) => {
     const [searchValue, setSearchValue] = useState<string>("");
     const [selectedValue, setSelectedValue] = useState<string>("");
     const [results, setResults] = useState<City[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
+    // Initialize searchValue based on the initial value prop
     useEffect(() => {
-        setSearchValue(value ? `${value.name}, ${value.country}` : "");
-    }, [value]);
+        if (value) {
+            const formattedValue = `${value.name} ${value.postcodes?.[0] || ""}, ${value.country}`;
+            setSearchValue(formattedValue);
+        } else {
+            setSearchValue("");
+        }
+    }, []); // Run only once on mount
 
     useEffect(() => {
         if (searchValue.length < 3) {
@@ -39,10 +43,11 @@ const CityAutocomplete = ({
                     searchValue
                 )}`
             )
-                .then((res) => res.json())
-                .then((data) => {
-                    setResults(data.results || []);
+                .then((res) => {
+                    if (!res.ok) throw new Error(`Error fetching data: ${res.statusText}`);
+                    return res.json();
                 })
+                .then((data) => setResults(data.results || []))
                 .catch(console.error)
                 .finally(() => setLoading(false));
         }, 500);
@@ -57,28 +62,26 @@ const CityAutocomplete = ({
 
     const handleSelectedValueChange = (value: string) => {
         setSelectedValue(value);
-
-        if (!value) {
-            return;
-        }
+        if (!value) return;
 
         try {
             const city: City = JSON.parse(value);
-            setSearchValue(`${city.name}, ${city.country}`);
+            const formattedValue = `${city.name} ${city.postcodes?.[0] || ""}, ${city.country}`;
+            setSearchValue(formattedValue);
             onSelect(city);
         } catch (error) {
-            console.error("Failed to parse JSON:", error);
+            console.error("Failed to parse selected city JSON:", error);
         }
     };
 
-
     const items = results.map((city) => ({
         value: JSON.stringify(city),
-        label: `${city.name}, ${city.country}`,
+        label: `${city.name} ${city.postcodes?.[0] || ""}, ${city.country}`,
     }));
 
+    // Use a key to reset the component when the value changes
     return (
-        <div className="relative">
+        <div className="relative" key={value ? `${value.name}-${value.country}` : "empty"}>
             <AutoComplete
                 selectedValue={selectedValue}
                 onSelectedValueChange={handleSelectedValueChange}

@@ -1,31 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import useTheme from "@/hooks/useTheme";
 
 const ThemeSwitcher: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    const storedDarkMode = JSON.parse(localStorage.getItem("darkMode") || "false");
-     setDarkMode(storedDarkMode);
-  }, [])
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("darkMode", darkMode.toString());
-  }, [darkMode]);
-
+  const {darkMode, switchTheme} = useTheme();
 
   return (
-    <div>
-      <Button variant="outline" onClick={() => setDarkMode(!darkMode)}>
+      <Button variant="outline" onClick={() => switchTheme()}>
         {darkMode ? "Thème Clair" : "Thème Sombre"}
       </Button>
-    </div>
   );
 };
 
