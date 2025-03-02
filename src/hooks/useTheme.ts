@@ -14,12 +14,61 @@ const DEFAULT_THEME: ThemeSettings = {
 
 // Predefined background images
 export const BACKGROUND_IMAGES = [
-  { id: "none", name: "Aucun", value: null },
-  { id: "mountains", name: "Montagnes", value: "/backgrounds/mountains.jpg" },
-  { id: "ocean", name: "Océan", value: "/backgrounds/ocean.jpg" },
-  { id: "forest", name: "Forêt", value: "/backgrounds/forest.jpg" },
-  { id: "city", name: "Ville", value: "/backgrounds/city.jpg" },
-  { id: "abstract", name: "Abstrait", value: "/backgrounds/abstract.jpg" },
+  { id: "none", name: "None", value: null },
+  {
+    id: "mountain",
+    name: "Mountains",
+    value:
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "forest",
+    name: "Forest",
+    value:
+      "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "cityscape",
+    name: "City",
+    value:
+      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop",
+  },
+  {
+    id: "desert",
+    name: "Desert",
+    value:
+      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "night_sky",
+    name: "Starry Sky",
+    value:
+      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=2187&auto=format&fit=crop",
+  },
+  {
+    id: "lake",
+    name: "Lake",
+    value:
+      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?q=80&w=2071&auto=format&fit=crop",
+  },
+  {
+    id: "winter",
+    name: "Winter",
+    value:
+      "https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=2108&auto=format&fit=crop",
+  },
+  {
+    id: "aurora",
+    name: "Northern Lights",
+    value:
+      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "sunset",
+    name: "Sunset",
+    value:
+      "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=2072&auto=format&fit=crop",
+  },
 ];
 
 const useTheme = () => {

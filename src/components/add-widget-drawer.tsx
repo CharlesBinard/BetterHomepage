@@ -19,26 +19,22 @@ import { SquarePlus } from "lucide-react";
 
 const AddWidgetDrawer = () => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const { editMode } = useEditMode();
+  const { setEditMode } = useEditMode();
   const { addWidget } = useWidget();
 
   const handleAddWidget = (type: WidgetType) => {
     addWidget(type);
     setIsOpen(false);
+    setEditMode(true);
   };
-
-  // Only render the component if in edit mode
-  if (!editMode) {
-    return null;
-  }
 
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button
-          variant="default"
+          variant="outline"
           size="icon"
-          className="bg-blue-500 hover:bg-blue-600 shadow-sm transition-all duration-200"
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
         >
           <SquarePlus className="h-4 w-4" />
         </Button>

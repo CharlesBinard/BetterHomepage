@@ -43,19 +43,19 @@ const ThemeSwitcher: React.FC = () => {
             {darkMode ? (
               <>
                 <SunIcon className="mr-2 h-4 w-4" />
-                <span>Thème Clair</span>
+                <span>Light Theme</span>
               </>
             ) : (
               <>
                 <MoonIcon className="mr-2 h-4 w-4" />
-                <span>Thème Sombre</span>
+                <span>Dark Theme</span>
               </>
             )}
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
-        <DropdownMenuLabel>Fond d&apos;écran</DropdownMenuLabel>
+        <DropdownMenuLabel>Background Image</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         {/* Background Image Selection */}

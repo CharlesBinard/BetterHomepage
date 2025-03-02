@@ -9,7 +9,7 @@ const EditModeToggle: React.FC = () => {
   return (
     <Button
       variant={editMode ? "default" : "outline"}
-      size="sm"
+      size="icon"
       className={`
         shadow-sm transition-all duration-200 font-medium
         ${
@@ -22,15 +22,9 @@ const EditModeToggle: React.FC = () => {
       aria-label={editMode ? "Exit edit mode" : "Enter edit mode"}
     >
       {editMode ? (
-        <>
-          <EyeIcon className="h-4 w-4 mr-2" />
-          View Mode
-        </>
+        <EditIcon className="h-[1.2rem] w-[1.2rem]" />
       ) : (
-        <>
-          <EditIcon className="h-4 w-4 mr-2" />
-          Edit Mode
-        </>
+        <EyeIcon className="h-[1.2rem] w-[1.2rem]" />
       )}
     </Button>
   );

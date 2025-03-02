@@ -54,8 +54,7 @@ export const defaultDatetimeData: WidgetDatetimeData = {
   showSeconds: true,
   showDayOfWeek: true,
   textAlign: "center",
-  className:
-    "shadow-xl rounded-2xl w-full h-full bg-background/60 backdrop-blur-sm p-4",
+  className: "w-full h-full",
   containerClassName: "flex flex-col justify-center items-center h-full",
   timeClassName: "text-3xl font-bold",
   dateClassName: "text-xl mt-2",

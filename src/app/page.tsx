@@ -70,10 +70,10 @@ const Home: React.FC = () => {
       }}
       modifiers={[restrictToWindowEdges]}
     >
-      {/* Background Image */}
-      <BackgroundImage />
+      {/* Background Image  */}
+      <BackgroundImage blurAmount={5} />
 
-      <div className="h-screen w-screen relative bg-gray-50 dark:bg-gray-900 p-6 pt-14">
+      <div className="h-screen w-screen relative p-6 pt-14">
         {widgetsData.map((data) => (
           <Widget
             key={data.id}
