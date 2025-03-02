@@ -1,9 +1,10 @@
 // widget-constants.ts
-import { Bookmark, Clock, CloudSun, ScreenShare } from "lucide-react";
+import { Bookmark, Clock, CloudSun, ScreenShare, Search } from "lucide-react";
 import React from "react";
 import { defaultBookmarkData } from "./bookmark/widget-bookmark";
 import { defaultDatetimeData } from "./datetime/widget-datetime";
 import { defaultIframeData } from "./iframe/widget-iframe";
+import { defaultSearchData } from "./search/widget-search";
 import { defaultWeatherData } from "./weather/widget-weather";
 import { WidgetData, WidgetType } from "./widget-types";
 
@@ -48,5 +49,13 @@ export const DEFAULT_WIDGET_CONFIGS: Record<WidgetType, WidgetDefaultConfig> = {
     icon: Clock,
     defaultData: defaultDatetimeData,
     color: "#9932a8",
+  },
+  [WidgetType.SEARCH]: {
+    title: "Search",
+    description: "Search in your favorite search engine",
+    type: WidgetType.SEARCH,
+    icon: Search,
+    defaultData: defaultSearchData,
+    color: "#a83232",
   },
 };

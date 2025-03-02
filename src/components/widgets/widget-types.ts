@@ -3,6 +3,7 @@ import { BoxSize } from "@/components/draggable-resizable-box";
 import { WidgetBookmarkData } from "@/components/widgets/bookmark/widget-bookmark";
 import { WidgetDatetimeData } from "@/components/widgets/datetime/widget-datetime";
 import { WidgetIframeData } from "@/components/widgets/iframe/widget-iframe";
+import { WidgetSearchData } from "@/components/widgets/search/widget-search";
 import { WidgetWeatherData } from "@/components/widgets/weather/widget-weather";
 
 export enum WidgetType {
@@ -10,6 +11,7 @@ export enum WidgetType {
   BOOKMARK = "bookmark",
   IFRAME = "iframe",
   DATETIME = "datetime",
+  SEARCH = "search",
 }
 
 export interface CommonWidgetProps {
@@ -22,4 +24,5 @@ export type WidgetData =
   | WidgetWeatherData
   | WidgetBookmarkData
   | WidgetIframeData
-  | WidgetDatetimeData;
+  | WidgetDatetimeData
+  | WidgetSearchData;

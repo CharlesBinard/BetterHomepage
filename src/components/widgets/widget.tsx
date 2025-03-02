@@ -9,6 +9,7 @@ import {
   WidgetType,
 } from "@/components/widgets/widget-types";
 import { memo } from "react";
+import WidgetSearch from "./search/widget-search";
 
 export interface WidgetProps extends CommonWidgetProps {
   data: WidgetData;
@@ -25,6 +26,8 @@ const Widget = memo((props: WidgetProps) => {
       return <WidgetIframe {...props} data={data} />;
     case WidgetType.DATETIME:
       return <WidgetDatetime {...props} data={data} />;
+    case WidgetType.SEARCH:
+      return <WidgetSearch {...props} data={data} />;
     default:
       return null;
   }
