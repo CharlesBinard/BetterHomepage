@@ -1,25 +1,26 @@
 services:
   traefik:
-    image: traefik:v2.10
+    image: traefik:latest
     container_name: traefik
     restart: unless-stopped
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --certificatesresolvers.myresolver.acme.httpchallenge=true
+      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.myresolver.acme.email=rywoox@gmail.com
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --api=true
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080" # Traefik dashboard
     volumes:
+      - ./letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/config:/etc/traefik
-    command:
-      - "--api.insecure=true" # Dashboard available without authentication (for development)
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.myresolver.acme.email=rywoox@gmail.com" # Replace with your actual email
-      - "--certificatesresolvers.myresolver.acme.storage=/etc/traefik/acme.json"
     networks:
       - web
 
@@ -34,6 +35,11 @@ services:
       - PORT=3000
     ports: # Uncomment for direct testing
       - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.betterhomepage.rule=Host(`home.rywoox.com`) || Host(`www.home.rywoox.com`)"
+      - "traefik.http.routers.betterhomepage.entrypoints=websecure"
+      - "traefik.http.routers.betterhomepage.tls.certresolver=myresolver"
     healthcheck:
       test:
         [
@@ -50,18 +56,6 @@ services:
       start_period: 30s
     networks:
       - web
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.betterhomepage.rule=Host(`home.rywoox.com`)"
-      - "traefik.http.routers.betterhomepage.entrypoints=websecure"
-      - "traefik.http.routers.betterhomepage.tls.certresolver=myresolver"
-      - "traefik.http.services.betterhomepage.loadbalancer.server.port=3000"
-      - "traefik.http.routers.betterhomepage-http.rule=Host(`home.rywoox.com`)"
-      - "traefik.http.routers.betterhomepage-http.entrypoints=web"
-      - "traefik.http.routers.betterhomepage-http.middlewares=redirecthttps"
-      - "traefik.http.middlewares.redirecthttps.redirectscheme.scheme=https"
-      - "traefik.http.routers.betterhomepage.middlewares=strip-prefix"
-      - "traefik.http.middlewares.strip-prefix.stripprefix.prefixes=/"
 
 networks:
   web:
