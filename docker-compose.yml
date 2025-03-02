@@ -17,7 +17,10 @@ services:
       - --certificatesresolvers.myresolver.acme.email=${ACME_EMAIL:-your-email@example.com}
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
       - --api=true
+      - --api.dashboard=true
       - --log.level=DEBUG
+      - --accesslog=true
+      - --accesslog.filepath=/var/log/traefik/access.log
       - --global.checkNewVersion=false
       - --global.sendAnonymousUsage=false
     ports:
@@ -25,9 +28,21 @@ services:
       - "443:443"
     volumes:
       - ./letsencrypt:/letsencrypt
+      - ./logs/traefik:/var/log/traefik
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`${DOMAIN:-localhost}`) && (PathPrefix(`/dashboard`) || PathPrefix(`/api/dashboard`))"
+      - "traefik.http.routers.traefik-dashboard.service=api@internal"
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik-dashboard.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:$$apr1$$lOz5ELjB$$QCiO7NJ.jEHh5Y5CygjRp/" # Username: admin, Password: admin
+      - "traefik.http.middlewares.traefik-compression.compress=true"
+      - "traefik.http.routers.traefik-dashboard.middlewares=traefik-compression,traefik-auth"
+      - "traefik.http.routers.traefik-dashboard.priority=100"
 
   web:
     build:
@@ -35,16 +50,24 @@ services:
       dockerfile: Dockerfile
     container_name: betterhomepage
     restart: unless-stopped
+    depends_on:
+      - traefik
     environment:
       - NODE_ENV=production
       - DOMAIN=${DOMAIN:-localhost}
       - NEXT_PUBLIC_APP_URL=https://${DOMAIN:-localhost}
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+    expose:
+      - 3000
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.web.rule=Host(`${DOMAIN:-localhost}`) || Host(`www.${DOMAIN:-localhost}`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
       - "traefik.http.services.web.loadbalancer.server.port=3000"
+      - "traefik.http.middlewares.web-compression.compress=true"
+      - "traefik.http.routers.web.middlewares=web-compression"
     healthcheck:
       test:
         [
@@ -64,5 +87,7 @@ services:
 
 networks:
   web:
+    name: web
+    external: false
     driver: bridge
     enable_ipv6: true
