@@ -2,6 +2,7 @@
 
 import {
   DndContext,
+  DragEndEvent,
   PointerSensor,
   TouchSensor,
   useSensor,
@@ -50,30 +51,57 @@ const Home: React.FC = () => {
     })
   );
 
-  return (
-    <DndContext
-      sensors={sensors}
-      onDragEnd={(event) => {
-        // Only allow moving widgets in edit mode
-        if (!editMode) return;
+  // Handle drag end with proper percentage-based positioning
+  const handleDragEnd = (event: DragEndEvent) => {
+    // Only allow moving widgets in edit mode
+    if (!editMode) return;
 
-        const id = event.active.id as string;
-        const widget = getWidgetById(id);
-        if (!widget) return;
+    const { active, delta } = event;
+
+    if (active) {
+      const id = active.id as string;
+      const widget = getWidgetById(id);
+
+      if (widget) {
+        // Get the current position
+        const currentX = widget.position.x;
+        const currentY = widget.position.y;
+
+        // Calculate deltas in percentages relative to viewport
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        const deltaXPercent = (delta.x / viewportWidth) * 100;
+        const deltaYPercent = (delta.y / viewportHeight) * 100;
+
+        // Apply deltas to current percentage position
+        let newX = currentX + deltaXPercent;
+        let newY = currentY + deltaYPercent;
+
+        // Constrain to viewport (allow some overflow for usability)
+        newX = Math.max(0, Math.min(newX, 95));
+        newY = Math.max(0, Math.min(newY, 95));
 
         const newPos = {
-          x: widget.position.x + event.delta.x,
-          y: widget.position.y + event.delta.y,
+          x: newX,
+          y: newY,
         };
 
         updateWidgetPosition(id, newPos);
-      }}
+      }
+    }
+  };
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragEnd={handleDragEnd}
       modifiers={[restrictToWindowEdges]}
     >
       {/* Background Image  */}
       <BackgroundImage blurAmount={5} />
 
-      <div className="h-screen w-screen relative p-6 pt-14">
+      <div className="h-screen w-screen relative p-3 sm:p-4 md:p-6 pt-14 overflow-hidden">
         {widgetsData.map((data) => (
           <Widget
             key={data.id}
@@ -84,7 +112,7 @@ const Home: React.FC = () => {
           />
         ))}
       </div>
-      <div className="fixed top-5 right-5 z-50 flex space-x-2">
+      <div className="fixed top-3 sm:top-5 right-3 sm:right-5 z-50 flex space-x-2">
         <ThemeSwitcher />
         <EditModeToggle />
         <AddWidgetDrawer />

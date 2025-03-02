@@ -49,8 +49,8 @@ export const defaultBookmarkData: WidgetBookmarkData = {
   ...defaultBaseData,
   type: WidgetType.BOOKMARK,
   size: {
-    width: 220,
-    height: 150,
+    width: 25,
+    height: 20,
   },
   bookmarks: [
     {

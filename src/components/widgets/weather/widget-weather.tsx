@@ -43,8 +43,8 @@ export const defaultWeatherData: WidgetWeatherData = {
     "bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-slate-700 dark:to-slate-900 shadow-xl rounded-2xl p-4 w-full h-full text-white",
   displayCity: true,
   size: {
-    width: 250,
-    height: 250,
+    width: 22,
+    height: 18,
   },
   city: {
     name: "Paris",

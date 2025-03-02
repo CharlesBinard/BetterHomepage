@@ -44,8 +44,8 @@ export const defaultDatetimeData: WidgetDatetimeData = {
   ...defaultBaseData,
   type: WidgetType.DATETIME,
   size: {
-    width: 280,
-    height: 140,
+    width: 20,
+    height: 15,
   },
   timeFormat: "24h",
   dateFormat: "medium",

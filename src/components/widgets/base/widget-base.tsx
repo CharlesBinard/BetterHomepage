@@ -21,12 +21,12 @@ export interface WidgetBaseProps extends Omit<WidgetProps, "onUpdateData"> {
 export const defaultBaseData: WidgetDataBase = {
   id: "0",
   size: {
-    height: 150,
-    width: 150,
+    height: 15,
+    width: 20,
   },
   position: {
-    x: 50,
-    y: 50,
+    x: 5,
+    y: 5,
   },
   className: "h-full w-full",
   zIndex: 1,

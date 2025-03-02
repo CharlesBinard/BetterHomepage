@@ -69,11 +69,11 @@ export interface WidgetSearchProps extends CommonWidgetProps {
 
 export const defaultSearchData: WidgetSearchData = {
   ...defaultBaseData,
-  size: {
-    width: 600,
-    height: 300,
-  },
   type: WidgetType.SEARCH,
+  size: {
+    width: 30, // percentage of viewport width
+    height: 15, // percentage of viewport height
+  },
   engine: "google",
   newTab: false,
   displayMode: "standard",

@@ -1,10 +1,10 @@
 "use client";
 
-import { BoxPosition, BoxSize } from "@/components/ui/draggable-resizable-box";
 import { DEFAULT_WIDGET_CONFIGS } from "@/components/widgets/widget-constants";
 import { WidgetData, WidgetType } from "@/components/widgets/widget-types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 const LOCAL_STORAGE_KEY = "widgets-data-dashboard";
 
@@ -56,6 +56,23 @@ const useWidget = () => {
     }, 300);
   }, [localWidgetsData]);
 
+  // Create a debounced resize handler
+  const handleResize = useDebouncedCallback(() => {
+    // Force a re-render when window size changes
+    // This ensures our percentage-based layout adapts correctly
+    setLocalWidgetsData((prevData) => [...prevData]);
+  }, 100);
+
+  // Add window resize handler
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    // Clean up
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [handleResize]);
+
   const addWidget = useCallback((type: WidgetType) => {
     nextWidgetId.current += 1;
     const newWidgetId = `widget-${nextWidgetId.current}`;
@@ -70,13 +87,45 @@ const useWidget = () => {
     );
   }, []);
 
-  const updateWidgetPosition = useCallback((id: string, pos: BoxPosition) => {
-    updateWidget(id, (widget) => ({ ...widget, position: pos }));
-  }, []);
+  const updateWidgetPosition = (
+    id: string,
+    position: { x: number; y: number }
+  ) => {
+    // We now receive position values already in percentages
+    // from the DndContext handler, so we just apply them directly
+    updateWidget(id, (widget) => ({
+      ...widget,
+      position: {
+        ...widget.position,
+        x: position.x,
+        y: position.y,
+      },
+    }));
+  };
 
-  const updateWidgetSize = useCallback((id: string, size: BoxSize) => {
-    updateWidget(id, (widget) => ({ ...widget, size }));
-  }, []);
+  const updateWidgetSize = (
+    id: string,
+    size: { width: number; height: number }
+  ) => {
+    // Convert absolute pixels to percentage of viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Calculate size as percentages
+    const sizeAsPercentage = {
+      width: (size.width / viewportWidth) * 100,
+      height: (size.height / viewportHeight) * 100,
+    };
+
+    updateWidget(id, (widget) => ({
+      ...widget,
+      size: {
+        ...widget.size,
+        width: sizeAsPercentage.width,
+        height: sizeAsPercentage.height,
+      },
+    }));
+  };
 
   const updateWidgetData = useCallback((id: string, newData: WidgetData) => {
     updateWidget(id, () => newData);

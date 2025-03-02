@@ -48,21 +48,29 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
     id,
   });
 
-  const computedTransform = useMemo(
-    () =>
-      transform && !isResizing
-        ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-        : "",
-    [transform, isResizing]
-  );
+  // Convert transform from absolute to percentage values
+  const computedTransform = useMemo(() => {
+    if (!transform || isResizing) {
+      return "";
+    }
+
+    // Convert the pixel-based transform to viewport percentages
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    const xPercent = (transform.x / viewportWidth) * 100;
+    const yPercent = (transform.y / viewportHeight) * 100;
+
+    return `translate3d(${xPercent}%, ${yPercent}%, 0)`;
+  }, [transform, isResizing]);
 
   const boxStyle: React.CSSProperties = useMemo(
     () => ({
       position: "absolute",
-      top: position.y,
-      left: position.x,
-      width: localSize.width,
-      height: localSize.height,
+      top: `${position.y}%`,
+      left: `${position.x}%`,
+      width: `${localSize.width}%`,
+      height: `${localSize.height}%`,
       transform: computedTransform,
       zIndex,
       transition: "none",
@@ -102,8 +110,14 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
       // Get starting coordinates for both mouse and touch events
       const startX = "touches" in e ? e.touches[0].clientX : e.clientX;
       const startY = "touches" in e ? e.touches[0].clientY : e.clientY;
-      const startWidth = localSize.width;
-      const startHeight = localSize.height;
+
+      // Get current viewport size
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // Convert percentage to pixels for calculation
+      const startWidthPx = (localSize.width / 100) * viewportWidth;
+      const startHeightPx = (localSize.height / 100) * viewportHeight;
 
       // Handler for mouse move and touch move
       const onMove = (moveEvent: MouseEvent | TouchEvent) => {
@@ -117,13 +131,25 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
             ? moveEvent.touches[0].clientY
             : (moveEvent as MouseEvent).clientY;
 
-        const newWidth = Math.max(startWidth + (clientX - startX), MIN_WIDTH);
-        const newHeight = Math.max(
-          startHeight + (clientY - startY),
+        // Calculate new size in pixels
+        const newWidthPx = Math.max(
+          startWidthPx + (clientX - startX),
+          MIN_WIDTH
+        );
+        const newHeightPx = Math.max(
+          startHeightPx + (clientY - startY),
           MIN_HEIGHT
         );
 
-        const newSize = { width: newWidth, height: newHeight };
+        // Convert back to percentages
+        const newWidthPercent = (newWidthPx / viewportWidth) * 100;
+        const newHeightPercent = (newHeightPx / viewportHeight) * 100;
+
+        const newSize = {
+          width: newWidthPercent,
+          height: newHeightPercent,
+        };
+
         setLocalSize(newSize);
         debouncedUpdateSize(newSize);
 
