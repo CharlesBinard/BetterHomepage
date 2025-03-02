@@ -63,20 +63,21 @@ const Home: React.FC = () => {
       const widget = getWidgetById(id);
 
       if (widget) {
-        // Get the current position
-        const currentX = widget.position.x;
-        const currentY = widget.position.y;
-
-        // Calculate deltas in percentages relative to viewport
+        // Calculate absolute new position (original percentage-based pos + delta in pixels)
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
-        const deltaXPercent = (delta.x / viewportWidth) * 100;
-        const deltaYPercent = (delta.y / viewportHeight) * 100;
+        // Convert current percentage positions to pixels for accurate calculation
+        const currentXPx = (widget.position.x / 100) * viewportWidth;
+        const currentYPx = (widget.position.y / 100) * viewportHeight;
 
-        // Apply deltas to current percentage position
-        let newX = currentX + deltaXPercent;
-        let newY = currentY + deltaYPercent;
+        // Add the delta (in pixels) from the drag operation
+        const newXPx = currentXPx + delta.x;
+        const newYPx = currentYPx + delta.y;
+
+        // Convert back to percentages
+        let newX = (newXPx / viewportWidth) * 100;
+        let newY = (newYPx / viewportHeight) * 100;
 
         // Constrain to viewport (allow some overflow for usability)
         newX = Math.max(0, Math.min(newX, 95));

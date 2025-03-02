@@ -112,17 +112,20 @@ const useWidget = () => {
     const viewportHeight = window.innerHeight;
 
     // Calculate size as percentages
-    const sizeAsPercentage = {
-      width: (size.width / viewportWidth) * 100,
-      height: (size.height / viewportHeight) * 100,
-    };
+    let widthPercent = (size.width / viewportWidth) * 100;
+    let heightPercent = (size.height / viewportHeight) * 100;
+
+    // Add constraints to keep sizes reasonable
+    // Min: 10% of viewport, Max: 90% of viewport
+    widthPercent = Math.max(10, Math.min(widthPercent, 90));
+    heightPercent = Math.max(10, Math.min(heightPercent, 90));
 
     updateWidget(id, (widget) => ({
       ...widget,
       size: {
         ...widget.size,
-        width: sizeAsPercentage.width,
-        height: sizeAsPercentage.height,
+        width: widthPercent,
+        height: heightPercent,
       },
     }));
   };

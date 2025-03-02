@@ -54,14 +54,9 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
       return "";
     }
 
-    // Convert the pixel-based transform to viewport percentages
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-
-    const xPercent = (transform.x / viewportWidth) * 100;
-    const yPercent = (transform.y / viewportHeight) * 100;
-
-    return `translate3d(${xPercent}%, ${yPercent}%, 0)`;
+    // During active dragging, use pixel-based transform for precise cursor following
+    // This ensures the widget stays with the cursor during drag operations
+    return `translate3d(${transform.x}px, ${transform.y}px, 0)`;
   }, [transform, isResizing]);
 
   const boxStyle: React.CSSProperties = useMemo(
