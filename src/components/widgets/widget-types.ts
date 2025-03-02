@@ -1,5 +1,5 @@
 // widget-types.ts
-import { BoxSize } from "@/components/draggable-resizable-box";
+import { BoxSize } from "@/components/ui/draggable-resizable-box";
 import { WidgetBookmarkData } from "@/components/widgets/bookmark/widget-bookmark";
 import { WidgetDatetimeData } from "@/components/widgets/datetime/widget-datetime";
 import { WidgetIframeData } from "@/components/widgets/iframe/widget-iframe";

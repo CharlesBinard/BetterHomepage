@@ -9,10 +9,10 @@ import {
 } from "@dnd-kit/core";
 import React from "react";
 
-import AddWidgetDrawer from "@/components/add-widget-drawer";
-import BackgroundImage from "@/components/background-image";
-import EditModeToggle from "@/components/edit-mode-toggle";
-import ThemeSwitcher from "@/components/theme-switcher";
+import AddWidgetDrawer from "@/components/layout/add-widget-drawer";
+import BackgroundImage from "@/components/layout/background-image";
+import EditModeToggle from "@/components/settings/edit-mode-toggle";
+import ThemeSwitcher from "@/components/settings/theme-switcher";
 import Widget from "@/components/widgets/widget";
 import useEditMode from "@/hooks/useEditMode";
 import useTheme from "@/hooks/useTheme";
