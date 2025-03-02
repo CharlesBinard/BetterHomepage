@@ -5,18 +5,15 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
     domains: [
-      // Add domains for remote images here
       "localhost",
       process.env.DOMAIN || "localhost",
       `www.${process.env.DOMAIN || "localhost"}`,
     ],
   },
-  // Important: For production with Traefik
+  // Remove the assetPrefix or set it to empty string
   basePath: "",
-  assetPrefix:
-    process.env.NODE_ENV === "production"
-      ? `https://${process.env.DOMAIN || "localhost"}`
-      : "",
+  // Only use assetPrefix if you're serving assets from a CDN
+  // assetPrefix: "",
 };
 
 export default nextConfig;
