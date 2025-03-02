@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone", // Optimizes for Docker deployments
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: [
       // Add domains for remote images here
