@@ -43,8 +43,6 @@ services:
       - "traefik.http.routers.betterhomepage.entrypoints=websecure"
       - "traefik.http.routers.betterhomepage.tls.certresolver=myresolver"
       - "traefik.http.services.betterhomepage.loadbalancer.server.port=3000"
-      - "traefik.http.middlewares.strip-slash.stripprefix.prefixes=/"
-      - "traefik.http.routers.betterhomepage.middlewares=strip-slash@docker"
     healthcheck:
       test:
         [
