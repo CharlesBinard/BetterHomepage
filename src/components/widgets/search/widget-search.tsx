@@ -442,9 +442,9 @@ const WidgetSearch: React.FC<WidgetSearchProps> = ({
 
               <Button
                 type="submit"
-                variant="default"
+                variant="outline"
                 size="icon"
-                className={`rounded-xl bg-gradient-to-r ${colors.primary} hover:opacity-90 hover:shadow-md transition-all duration-200 transform hover:scale-105`}
+                className={`rounded-md bg-gradient-to-r ${colors.primary} hover:opacity-90 hover:shadow-md transition-all duration-200 transform hover:scale-105`}
               >
                 <Search className="h-4 w-4" />
               </Button>

@@ -56,7 +56,7 @@ export const defaultDatetimeData: WidgetDatetimeData = {
   textAlign: "center",
   className: "w-full h-full",
   containerClassName: "flex flex-col justify-center items-center h-full",
-  timeClassName: "text-3xl font-bold",
+  timeClassName: "text-6xl font-bold",
   dateClassName: "text-xl mt-2",
   useCustomFont: false,
   fontFamily: "",
@@ -170,13 +170,11 @@ const DateTimeDisplay = memo(
         style={containerStyle}
       >
         {(display === "timeOnly" || display === "both") && (
-          <div className={cn("text-3xl font-bold", data.timeClassName)}>
-            {timeString}
-          </div>
+          <div className={data.timeClassName}>{timeString}</div>
         )}
 
         {(display === "dateOnly" || display === "both") && (
-          <div className={cn("text-xl mt-2", data.dateClassName)}>
+          <div className={data.dateClassName}>
             {showDayOfWeek && <div className="font-medium">{dayOfWeek}</div>}
             <div>{dateString}</div>
           </div>
