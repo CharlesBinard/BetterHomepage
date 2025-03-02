@@ -8,9 +8,16 @@ const EditModeToggle: React.FC = () => {
 
   return (
     <Button
-      variant="outline"
+      variant={editMode ? "default" : "outline"}
       size="sm"
-      className="bg-white dark:bg-gray-800 shadow-sm"
+      className={`
+        shadow-sm transition-all duration-200 font-medium
+        ${
+          editMode
+            ? "bg-blue-500 hover:bg-blue-600 text-white"
+            : "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700"
+        }
+      `}
       onClick={() => setEditMode(!editMode)}
       aria-label={editMode ? "Exit edit mode" : "Enter edit mode"}
     >

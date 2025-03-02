@@ -35,8 +35,12 @@ const AddWidgetDrawer = () => {
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
-        <Button variant="outline" size="icon">
-          <SquarePlus />
+        <Button
+          variant="default"
+          size="icon"
+          className="bg-blue-500 hover:bg-blue-600 shadow-sm transition-all duration-200"
+        >
+          <SquarePlus className="h-4 w-4" />
         </Button>
       </DrawerTrigger>
       <DrawerContent>

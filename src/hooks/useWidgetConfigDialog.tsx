@@ -37,18 +37,20 @@ const useWidgetConfigDialog = () => {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           {editMode && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-1 left-1 z-100"
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                openDialog();
-              }}
-            >
-              <Settings />
-            </Button>
+            <div className="absolute top-1 left-1 z-10 flex space-x-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-md p-1 shadow-md">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="cursor-grab touch-manipulation h-8 w-8 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDialog();
+                }}
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
           )}
         </DialogTrigger>
         <DialogContent className="sm:max-w-[525px] " style={{ zIndex: 101 }}>
@@ -66,7 +68,8 @@ const useWidgetConfigDialog = () => {
     );
   };
 
-  return { WidgetConfigDialog, openDialog, closeDialog };
+  // Return open state as well to allow consumers to react to dialog state
+  return { WidgetConfigDialog, openDialog, closeDialog, isOpen: open };
 };
 
 export default useWidgetConfigDialog;

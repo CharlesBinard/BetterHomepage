@@ -10,7 +10,9 @@ import {
 import React from "react";
 
 import AddWidgetDrawer from "@/components/add-widget-drawer";
+import BackgroundImage from "@/components/background-image";
 import EditModeToggle from "@/components/edit-mode-toggle";
+import ThemeSwitcher from "@/components/theme-switcher";
 import Widget from "@/components/widgets/widget";
 import useEditMode from "@/hooks/useEditMode";
 import useTheme from "@/hooks/useTheme";
@@ -68,7 +70,10 @@ const Home: React.FC = () => {
       }}
       modifiers={[restrictToWindowEdges]}
     >
-      <div className="h-screen w-screen relative bg-gray-50 dark:bg-gray-900 p-6">
+      {/* Background Image */}
+      <BackgroundImage />
+
+      <div className="h-screen w-screen relative bg-gray-50 dark:bg-gray-900 p-6 pt-14">
         {widgetsData.map((data) => (
           <Widget
             key={data.id}
@@ -80,6 +85,7 @@ const Home: React.FC = () => {
         ))}
       </div>
       <div className="fixed top-5 right-5 z-50 flex space-x-2">
+        <ThemeSwitcher />
         <EditModeToggle />
         <AddWidgetDrawer />
       </div>

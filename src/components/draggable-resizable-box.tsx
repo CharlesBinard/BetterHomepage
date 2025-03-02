@@ -157,30 +157,48 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
     <div
       ref={setNodeRef}
       style={boxStyle}
-      className={`group select-none transition-all`}
+      className={`
+        group select-none transition-all
+        ${
+          editMode
+            ? "ring-2 ring-blue-500/60 dark:ring-blue-500/60 shadow-md rounded-lg"
+            : ""
+        }
+      `}
       {...attributes}
     >
-      <div className={`${className}`}>{children}</div>
+      {/* Edit mode indicator overlay */}
+      {editMode && (
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none rounded-lg"></div>
+      )}
+
+      {/* Widget content */}
+      <div
+        className={`${className} relative h-full rounded-lg overflow-hidden`}
+      >
+        {children}
+      </div>
 
       {editMode && (
         <>
-          <div className="absolute top-1 right-1 z-10 flex">
+          {/* Controls toolbar */}
+          <div className="absolute top-1 right-1 z-10 flex space-x-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-md p-1 shadow-md">
             <Button
               variant="ghost"
-              className="cursor-grab touch-manipulation h-10 w-10"
+              className="cursor-grab touch-manipulation h-8 w-8 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900"
               size="icon"
               {...listeners}
               {...attributes}
               aria-label="Move"
               style={{ touchAction: "none" }}
             >
-              <GripVertical />
+              <GripVertical className="h-4 w-4 text-gray-700 dark:text-gray-300" />
             </Button>
 
             <Button
               variant="ghost"
               size="icon"
-              className="touch-manipulation h-10 w-10"
+              className="touch-manipulation h-8 w-8 rounded-md hover:bg-red-100 dark:hover:bg-red-900"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={(e) => {
                 e.stopPropagation();
@@ -188,16 +206,23 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
               }}
               aria-label="Delete"
             >
-              <CircleX />
+              <CircleX className="h-4 w-4 text-red-500 dark:text-red-400" />
             </Button>
           </div>
+
+          {/* Resize handle */}
           <div
             onMouseDown={handleResizeStart}
             onTouchStart={handleResizeStart}
-            className="absolute right-1 bottom-1 m-1 cursor-se-resize rounded-xl p-3 touch-manipulation"
+            className="absolute right-1 bottom-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-md rounded-md p-1.5 cursor-se-resize touch-manipulation hover:bg-blue-100 dark:hover:bg-blue-900"
             aria-label="Resize"
           >
-            <Scaling size={20} />
+            <Scaling className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+          </div>
+
+          {/* Small edit mode indicator badge */}
+          <div className="absolute bottom-1 left-1 bg-blue-500/80 text-white text-xs px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm">
+            Edit mode
           </div>
         </>
       )}
