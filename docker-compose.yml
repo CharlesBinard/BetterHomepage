@@ -40,6 +40,8 @@ services:
       - "traefik.http.routers.betterhomepage.rule=Host(`home.rywoox.com`) || Host(`www.home.rywoox.com`)"
       - "traefik.http.routers.betterhomepage.entrypoints=websecure"
       - "traefik.http.routers.betterhomepage.tls.certresolver=myresolver"
+      - "traefik.http.services.betterhomepage.loadbalancer.server.port=3000"
+
     healthcheck:
       test:
         [
