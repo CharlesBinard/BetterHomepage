@@ -30,8 +30,6 @@ services:
       dockerfile: Dockerfile
     container_name: betterhomepage
     restart: unless-stopped
-    depends_on:
-      - traefik
     environment:
       - NODE_ENV=production
       - DOMAIN=${DOMAIN}
