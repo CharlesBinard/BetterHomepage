@@ -40,7 +40,7 @@ services:
     ports:
       - "3000:3000"
     labels:
-    - "traefik.enable=true"
+      - "traefik.enable=true"
       - "traefik.http.routers.betterhomepage.rule=Host(`home.rywoox.com`) || Host(`www.home.rywoox.com`)"
       - "traefik.http.routers.betterhomepage.entrypoints=websecure"
       - "traefik.http.routers.betterhomepage.tls.certresolver=myresolver"
