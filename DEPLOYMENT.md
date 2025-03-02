@@ -1,27 +1,23 @@
 # Deployment Guide
 
-This guide provides instructions for deploying your application using Docker Compose.
+This guide provides instructions for deploying your BetterHomepage application using Docker Compose with Traefik for HTTPS support.
 
 ## Prerequisites
 
 - Docker and Docker Compose installed on your server
-- Git (to clone your repository)
+- A domain name pointed to your server's IP address
 - Basic knowledge of terminal commands
 
 ## Deployment Steps
 
 ### 1. Prepare Environment Variables
 
-Create a `.env` file based on the provided `.env.example`:
-
-```bash
-cp .env.example .env
-```
-
 Edit the `.env` file with your actual settings:
 
 ```bash
-nano .env
+# Update with your actual domain and email
+DOMAIN=yourdomain.com
+ACME_EMAIL=your-email@example.com
 ```
 
 ### 2. Build and Deploy
@@ -30,10 +26,10 @@ Build and start the application with Docker Compose:
 
 ```bash
 # Build the images
-docker compose build
+docker-compose build
 
 # Start the services in detached mode
-docker compose up -d
+docker-compose up -d
 ```
 
 ### 3. Verify Deployment
@@ -42,52 +38,105 @@ Check if the services are running correctly:
 
 ```bash
 # View all running containers
-docker compose ps
+docker-compose ps
 
 # Check logs
-docker compose logs -f web
+docker-compose logs -f traefik
+docker-compose logs -f web
 ```
 
-Visit your application at http://your-server-ip:3000 or the configured domain.
+Visit your application at https://yourdomain.com
 
 ### 4. Common Operations
 
 #### Restart services
 
 ```bash
-docker compose restart
+docker-compose restart
 ```
 
 #### Stop all services
 
 ```bash
-docker compose down
+docker-compose down
 ```
 
 #### Update application (after code changes)
 
 ```bash
 git pull
-docker compose build web
-docker compose up -d
+docker-compose build web
+docker-compose up -d
 ```
 
 #### View logs
 
 ```bash
 # All services
-docker compose logs
+docker-compose logs
 
 # Specific service
-docker compose logs -f web
+docker-compose logs -f web
+docker-compose logs -f traefik
 ```
+
+## SSL Certificates
+
+Traefik automatically handles SSL certificate issuance and renewal through Let's Encrypt. The certificates are stored in the `./letsencrypt` directory.
+
+If you need to force certificate renewal:
+
+```bash
+docker-compose restart traefik
+```
+
+## Troubleshooting
+
+### Certificate Issues
+
+If you're having trouble with SSL certificates:
+
+1. Make sure your domain is correctly pointed to your server's IP address
+2. Check that ports 80 and 443 are open on your firewall
+3. Examine Traefik logs for specific errors:
+
+```bash
+docker-compose logs -f traefik
+```
+
+### Container Won't Start
+
+Check logs for errors:
+
+```bash
+docker-compose logs web
+```
+
+### DNS Configuration
+
+To verify your domain is correctly pointing to your server:
+
+```bash
+dig +short yourdomain.com
+```
+
+This should return your server's IP address.
+
+## Security Considerations
+
+For production environments:
+
+1. Use strong passwords for any admin interfaces
+2. Regularly update your containers (Watchtower helps with this)
+3. Consider setting up a backup system for your data
+4. Monitor your server for unusual activity
 
 ## Scaling
 
 To scale services horizontally (if needed and if your application supports it):
 
 ```bash
-docker compose up -d --scale web=3
+docker-compose up -d --scale web=3
 ```
 
 Note: This requires additional setup with a load balancer.
@@ -101,30 +150,3 @@ For production environments, consider:
 3. Configuring proper database backups
 4. Implementing monitoring (Prometheus, Grafana)
 5. Setting up CI/CD pipelines for automated deployments
-
-## Troubleshooting
-
-### Container Won't Start
-
-Check logs for errors:
-
-```bash
-docker compose logs web
-```
-
-### Database Connection Issues
-
-Verify your database connection settings in the `.env` file. Ensure the database container is running:
-
-```bash
-docker compose ps db
-```
-
-### Port Conflicts
-
-If port 3000 is already in use, modify the port mapping in `docker compose.yml`:
-
-```yaml
-ports:
-  - "3001:3000" # Maps host port 3001 to container port 3000
-```
