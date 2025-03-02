@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 BetterHomepage
 
-## Getting Started
+A beautiful, customizable browser homepage with powerful widgets to enhance your browsing experience.
 
-First, run the development server:
+![BetterHomepage](https://via.placeholder.com/800x400?text=BetterHomepage)
+
+## ✨ Features
+
+- 🔄 **Date & Time Widget** - Customizable clock and calendar
+- 🔖 **Bookmarks Widget** - Quick access to your favorite sites
+- 🔍 **Search Widget** - Find what you need quickly
+- 🌤️ **Weather Widget** - Stay updated with current conditions
+- 📱 **iFrame Widget** - Embed external content directly
+- 🎨 **Modern UI** - Clean design with dark/light mode support
+- 🧩 **Extensible** - Easy to add new custom widgets
+- 📱 **Responsive** - Works on all devices and screen sizes
+
+## 🚀 Quick Start
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/BetterHomepage.git
+
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit `http://localhost:3000` to see your homepage in action!
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🐳 Docker Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Ready to deploy? We've got you covered:
 
-## Learn More
+```bash
+# Start with Docker Compose
+docker compose up -d
+```
 
-To learn more about Next.js, take a look at the following resources:
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Technologies
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org/)
+- [React](https://reactjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Docker](https://www.docker.com/)
 
-## Deploy on Vercel
+## 📄 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[MIT](LICENSE)
