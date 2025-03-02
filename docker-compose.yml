@@ -15,6 +15,9 @@ services:
       - --certificatesresolvers.myresolver.acme.email=rywoox@gmail.com
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
       - --api=true
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
       - ./letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
