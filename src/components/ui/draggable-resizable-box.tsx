@@ -236,6 +236,9 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
             onTouchStart={handleResizeStart}
             className="absolute right-1 bottom-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-md rounded-md p-1.5 cursor-se-resize touch-manipulation hover:bg-blue-100 dark:hover:bg-blue-900"
             aria-label="Resize"
+            style={{
+              zIndex: zIndex + 1,
+            }}
           >
             <Scaling className="h-4 w-4 text-gray-700 dark:text-gray-300" />
           </div>
