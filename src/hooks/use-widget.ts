@@ -73,12 +73,13 @@ const useWidget = () => {
     };
   }, [handleResize]);
 
-  const addWidget = useCallback((type: WidgetType) => {
+  const addWidget = useCallback((type: WidgetType, data?: WidgetData) => {
     nextWidgetId.current += 1;
     const newWidgetId = `widget-${nextWidgetId.current}`;
 
     const newWidgetData: WidgetData = {
       ...DEFAULT_WIDGET_CONFIGS[type].defaultData,
+      ...data,
       id: newWidgetId,
     };
 

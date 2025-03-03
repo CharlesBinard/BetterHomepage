@@ -47,7 +47,8 @@ const WidgetIframe: React.FC<WidgetIframeProps> = ({
   onUpdateData,
   ...rest
 }) => {
-  const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+  const { WidgetConfigDialog, closeConfigDialog, openConfigDialog } =
+    useWidgetConfigDialog();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleIframeLoad = () => {
@@ -55,14 +56,14 @@ const WidgetIframe: React.FC<WidgetIframeProps> = ({
   };
 
   return (
-    <WidgetBase data={data} {...rest}>
+    <WidgetBase data={data} {...rest} openConfigDialog={openConfigDialog}>
       {/* Configuration Dialog */}
       <WidgetConfigDialog type={WidgetType.IFRAME}>
         <WidgetIframeConfigForm
           data={data}
           onSubmit={(newData) => {
             onUpdateData(data.id, newData);
-            closeDialog();
+            closeConfigDialog();
           }}
         />
       </WidgetConfigDialog>

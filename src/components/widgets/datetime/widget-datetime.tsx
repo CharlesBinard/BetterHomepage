@@ -190,7 +190,8 @@ const WidgetDatetime: React.FC<WidgetDatetimeProps> = ({
   onUpdateData,
   ...rest
 }) => {
-  const { WidgetConfigDialog, closeDialog, isOpen } = useWidgetConfigDialog();
+  const { WidgetConfigDialog, closeConfigDialog, openConfigDialog, isOpen } =
+    useWidgetConfigDialog();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -224,13 +225,13 @@ const WidgetDatetime: React.FC<WidgetDatetimeProps> = ({
   }, [isOpen]);
 
   return (
-    <WidgetBase data={data} {...rest}>
+    <WidgetBase data={data} {...rest} openConfigDialog={openConfigDialog}>
       {/* Configuration Dialog */}
       <WidgetConfigDialog type={WidgetType.DATETIME}>
         <MemoizedConfigForm
           data={safeData()}
           onUpdateData={onUpdateData}
-          closeDialog={closeDialog}
+          closeDialog={closeConfigDialog}
         />
       </WidgetConfigDialog>
 

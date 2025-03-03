@@ -58,11 +58,6 @@ export const defaultBookmarkData: WidgetBookmarkData = {
       url: "https://www.google.com",
       description: "Search engine",
     },
-    {
-      text: "GitHub",
-      url: "https://github.com",
-      description: "Code hosting platform",
-    },
   ],
   displayStyle: "list",
   hoverEffect: "scale",
@@ -77,10 +72,16 @@ export const defaultBookmarkData: WidgetBookmarkData = {
 // Helper to generate the favicon URL with Google's favicon service as backup
 const getFaviconUrl = (url: string, fallbackIconUrl?: string) => {
   try {
+    // Parse the URL to get the domain
     const domain = new URL(url).hostname;
+    // Use Google's favicon service which handles CORS properly
     return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
   } catch {
-    return fallbackIconUrl || "/icons/globe.svg";
+    // If URL parsing fails, return the fallback
+    return (
+      fallbackIconUrl ||
+      "https://www.google.com/s2/favicons?domain=google.com&sz=64"
+    );
   }
 };
 
@@ -89,7 +90,8 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
   onUpdateData,
   ...rest
 }) => {
-  const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+  const { WidgetConfigDialog, closeConfigDialog, openConfigDialog } =
+    useWidgetConfigDialog();
 
   // Set defaults for missing properties
   const displayStyle = data.displayStyle || "list";
@@ -141,13 +143,13 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
   };
 
   return (
-    <WidgetBase data={data} {...rest}>
+    <WidgetBase data={data} {...rest} openConfigDialog={openConfigDialog}>
       <WidgetConfigDialog type={WidgetType.BOOKMARK}>
         <WidgetBookmarkConfigForm
           data={data}
           onSubmit={(newData) => {
             onUpdateData(data.id, newData);
-            closeDialog();
+            closeConfigDialog();
           }}
         />
       </WidgetConfigDialog>
@@ -178,8 +180,14 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
                 className={`${iconPosition === "top" ? "mb-1" : ""}`}
                 style={{ width: `${iconSize}px`, height: `${iconSize}px` }}
                 onError={(e) => {
-                  e.currentTarget.src =
-                    data.fallbackIconUrl || "/icons/globe.svg";
+                  // If the image fails to load, use the fallback or a default icon
+                  if (data.fallbackIconUrl) {
+                    e.currentTarget.src = data.fallbackIconUrl;
+                  } else {
+                    // Generic global default
+                    e.currentTarget.src =
+                      "https://cdn-icons-png.flaticon.com/512/9166/9166568.png";
+                  }
                 }}
               />
             )}

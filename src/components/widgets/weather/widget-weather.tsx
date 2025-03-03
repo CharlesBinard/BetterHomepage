@@ -60,7 +60,8 @@ const WidgetWeather: React.FC<WidgetWeatherProps> = ({
   onUpdateData,
   ...rest
 }) => {
-  const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+  const { WidgetConfigDialog, closeConfigDialog, openConfigDialog } =
+    useWidgetConfigDialog();
 
   // Validate and provide default for data if necessary
   const safeData = useMemo(() => {
@@ -195,7 +196,7 @@ const WidgetWeather: React.FC<WidgetWeatherProps> = ({
             : newData.displayCity,
       });
 
-      closeDialog();
+      closeConfigDialog();
 
       // Refresh weather data with new settings
       setTimeout(() => refetch(), 300);
@@ -205,7 +206,7 @@ const WidgetWeather: React.FC<WidgetWeatherProps> = ({
   };
 
   return (
-    <WidgetBase data={safeData} {...rest}>
+    <WidgetBase data={safeData} {...rest} openConfigDialog={openConfigDialog}>
       <WidgetConfigDialog type={WidgetType.WEATHER}>
         <WidgetWeatherConfigForm
           data={{

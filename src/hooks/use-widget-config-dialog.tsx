@@ -21,11 +21,11 @@ const useWidgetConfigDialog = () => {
   const { editMode } = useEditMode();
   const [open, setOpen] = useState(false);
 
-  const openDialog = useCallback(() => {
+  const openConfigDialog = useCallback(() => {
     setOpen(true);
   }, []);
 
-  const closeDialog = useCallback(() => {
+  const closeConfigDialog = useCallback(() => {
     setOpen(false);
   }, []);
 
@@ -45,7 +45,7 @@ const useWidgetConfigDialog = () => {
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {
                   e.stopPropagation();
-                  openDialog();
+                  openConfigDialog();
                 }}
               >
                 <Settings className="h-4 w-4" />
@@ -69,7 +69,12 @@ const useWidgetConfigDialog = () => {
   };
 
   // Return open state as well to allow consumers to react to dialog state
-  return { WidgetConfigDialog, openDialog, closeDialog, isOpen: open };
+  return {
+    WidgetConfigDialog,
+    openConfigDialog,
+    closeConfigDialog,
+    isOpen: open,
+  };
 };
 
 export default useWidgetConfigDialog;

@@ -285,7 +285,8 @@ const WidgetSearch: React.FC<WidgetSearchProps> = ({
   onUpdateData,
   ...rest
 }) => {
-  const { WidgetConfigDialog, closeDialog } = useWidgetConfigDialog();
+  const { WidgetConfigDialog, closeConfigDialog, openConfigDialog } =
+    useWidgetConfigDialog();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedScope, setSelectedScope] = useState<SearchScope>(
     data.defaultScope
@@ -356,7 +357,7 @@ const WidgetSearch: React.FC<WidgetSearchProps> = ({
   const colors = getEngineColors(data.engine);
 
   return (
-    <WidgetBase data={data} {...rest}>
+    <WidgetBase data={data} {...rest} openConfigDialog={openConfigDialog}>
       <div>
         <div
           className={`w-full p-6 flex flex-col ${
@@ -528,7 +529,7 @@ const WidgetSearch: React.FC<WidgetSearchProps> = ({
           data={data}
           onSubmit={(newData) => {
             onUpdateData(data.id, newData);
-            closeDialog();
+            closeConfigDialog();
           }}
         />
       </WidgetConfigDialog>
