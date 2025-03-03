@@ -13,8 +13,8 @@ import {
   CommonWidgetProps,
   WidgetType,
 } from "@/components/widgets/widget-types";
-import useWeatherQuery from "@/hooks/useWeatherQuery";
-import useWidgetConfigDialog from "@/hooks/useWidgetConfigDialog";
+import useWeatherQuery from "@/hooks/use-weather-query";
+import useWidgetConfigDialog from "@/hooks/use-widget-config-dialog";
 import { Loader2, RefreshCw } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 

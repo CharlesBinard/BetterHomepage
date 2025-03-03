@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/drawer";
 import { DEFAULT_WIDGET_CONFIGS } from "@/components/widgets/widget-constants";
 import { WidgetType } from "@/components/widgets/widget-types";
-import useEditMode from "@/hooks/useEditMode";
-import useWidget from "@/hooks/useWidget";
+import useEditMode from "@/hooks/use-edit-mode";
+import useWidget from "@/hooks/use-widget";
 import { motion } from "framer-motion";
 import { SquarePlus } from "lucide-react";
 

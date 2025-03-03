@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { WidgetType } from "@/components/widgets/widget-types";
-import useEditMode from "@/hooks/useEditMode";
+import useEditMode from "@/hooks/use-edit-mode";
 import { Settings } from "lucide-react";
 import React, { useCallback, useState } from "react";
 export interface WidgetConfigDialogProps {

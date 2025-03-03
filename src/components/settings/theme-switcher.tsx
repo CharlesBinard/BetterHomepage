@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useTheme, { BACKGROUND_IMAGES } from "@/hooks/useTheme";
+import useTheme, { BACKGROUND_IMAGES } from "@/hooks/use-theme";
 import { ImageIcon, MoonIcon, SunIcon } from "lucide-react";
 import React from "react";
 

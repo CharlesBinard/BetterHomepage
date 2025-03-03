@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import useEditMode from "@/hooks/useEditMode";
+import useEditMode from "@/hooks/use-edit-mode";
 import { useDraggable } from "@dnd-kit/core";
 import { CircleX, GripVertical, Scaling } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -144,7 +144,6 @@ const DraggableResizableBox: React.FC<DraggableResizableBoxProps> = ({
           width: newWidthPercent,
           height: newHeightPercent,
         };
-
         setLocalSize(newSize);
         debouncedUpdateSize(newSize);
 

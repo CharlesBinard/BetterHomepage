@@ -15,9 +15,9 @@ import BackgroundImage from "@/components/layout/background-image";
 import EditModeToggle from "@/components/settings/edit-mode-toggle";
 import ThemeSwitcher from "@/components/settings/theme-switcher";
 import Widget from "@/components/widgets/widget";
-import useEditMode from "@/hooks/useEditMode";
-import useTheme from "@/hooks/useTheme";
-import useWidget from "@/hooks/useWidget";
+import useEditMode from "@/hooks/use-edit-mode";
+import useTheme from "@/hooks/use-theme";
+import useWidget from "@/hooks/use-widget";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
 const Home: React.FC = () => {
@@ -100,7 +100,7 @@ const Home: React.FC = () => {
       modifiers={[restrictToWindowEdges]}
     >
       {/* Background Image  */}
-      <BackgroundImage blurAmount={5} />
+      <BackgroundImage blurAmount={3} />
 
       <div className="h-screen w-screen relative p-3 sm:p-4 md:p-6 pt-14 overflow-hidden">
         {widgetsData.map((data) => (

@@ -9,7 +9,7 @@ import {
   CommonWidgetProps,
   WidgetType,
 } from "@/components/widgets/widget-types";
-import useWidgetConfigDialog from "@/hooks/useWidgetConfigDialog";
+import useWidgetConfigDialog from "@/hooks/use-widget-config-dialog";
 import { cn } from "@/lib/utils";
 import React from "react";
 

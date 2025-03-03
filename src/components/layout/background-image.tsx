@@ -1,6 +1,6 @@
 "use client";
 
-import useTheme from "@/hooks/useTheme";
+import useTheme from "@/hooks/use-theme";
 import React, { useEffect, useState } from "react";
 
 interface BackgroundImageProps {
@@ -83,7 +83,7 @@ const BackgroundImage: React.FC<BackgroundImageProps> = ({
             backgroundRepeat: "no-repeat",
             filter: `blur(${blurAmount}px)`,
             opacity: isLoaded ? 1 : 0,
-            transform: "scale(1.1)", // Slight scale to prevent blur edge artifacts
+            transform: "scale(1.02)",
           }}
         />
 

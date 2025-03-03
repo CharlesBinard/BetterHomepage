@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import useEditMode from "@/hooks/useEditMode";
+import useEditMode from "@/hooks/use-edit-mode";
 import { EditIcon, EyeIcon } from "lucide-react";
 import React from "react";
 

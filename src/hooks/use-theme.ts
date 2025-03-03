@@ -42,8 +42,7 @@ export const BACKGROUND_IMAGES = [
   {
     id: "night_sky",
     name: "Starry Sky",
-    value:
-      "https://images.unsplash.com/photo-1531306728370-e2ebd9d7bb99?q=80&w=2187&auto=format&fit=crop",
+    value: "https://images3.alphacoders.com/114/1142030.jpg",
   },
   {
     id: "lake",
