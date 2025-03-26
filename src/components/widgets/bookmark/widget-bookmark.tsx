@@ -39,6 +39,7 @@ export interface WidgetBookmarkData extends WidgetDataBase {
   useCustomFallbackIcon?: boolean;
   fallbackIconUrl?: string;
   borderRadius?: string;
+  openInNewTab?: boolean;
 }
 
 export interface WidgetBookmarkProps extends CommonWidgetProps {
@@ -67,6 +68,7 @@ export const defaultBookmarkData: WidgetBookmarkData = {
   showFavicon: true,
   useCustomFallbackIcon: false,
   borderRadius: "rounded-md",
+  openInNewTab: true,
 };
 
 // Helper to generate the favicon URL with Google's favicon service as backup
@@ -101,6 +103,7 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
   const showLabels = data.showLabels !== false;
   const showFavicon = data.showFavicon !== false;
   const borderRadius = data.borderRadius || "rounded-md";
+  const openInNewTab = data.openInNewTab !== false;
 
   // Container class based on display style
   const containerClass =
@@ -127,7 +130,7 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
 
   // Get item class based on display style and icon position
   const getItemClass = () => {
-    const base = `${borderRadius} p-2 flex items-center no-underline ${getHoverClass()}`;
+    const base = `${borderRadius} mx-2 p-2 flex items-center no-underline ${getHoverClass()}`;
 
     if (displayStyle === "grid") {
       return iconPosition === "top"
@@ -159,8 +162,8 @@ const WidgetBookmark: React.FC<WidgetBookmarkProps> = ({
           <a
             key={index}
             href={bookmark.url}
-            target="_blank"
-            rel="noreferrer"
+            target={openInNewTab ? "_blank" : "_self"}
+            rel={openInNewTab ? "noreferrer" : ""}
             className={cn(getItemClass(), data.itemClassName)}
             style={{
               color: bookmark.customColor || "inherit",

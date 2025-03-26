@@ -58,6 +58,7 @@ const bookmarksSchema = z.object({
   useCustomFallbackIcon: z.boolean().optional(),
   fallbackIconUrl: z.string().optional(),
   borderRadius: z.string().optional(),
+  openInNewTab: z.boolean().optional(),
 });
 
 export const combinedSchema = baseFormSchema.merge(bookmarksSchema);
@@ -86,6 +87,7 @@ const WidgetBookmarkConfigForm: React.FC<WidgetBookmarkConfigFormProps> = ({
     useCustomFallbackIcon: data.useCustomFallbackIcon || false,
     fallbackIconUrl: data.fallbackIconUrl || "",
     borderRadius: data.borderRadius || "rounded-md",
+    openInNewTab: data.openInNewTab !== false,
   };
 
   const methods = useForm<WidgetBookmarkFormData>({
@@ -508,6 +510,27 @@ const WidgetBookmarkConfigForm: React.FC<WidgetBookmarkConfigFormProps> = ({
                           <FormLabel>Use Custom Fallback Icon</FormLabel>
                           <FormDescription>
                             Use a custom fallback icon for broken images
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={methods.control}
+                    name="openInNewTab"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between p-2 border rounded-md">
+                        <div className="space-y-0.5">
+                          <FormLabel>Open in New Tab</FormLabel>
+                          <FormDescription>
+                            Open bookmarks in a new browser tab
                           </FormDescription>
                         </div>
                         <FormControl>
