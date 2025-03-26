@@ -5,70 +5,16 @@ import { useEffect } from "react";
 export interface ThemeSettings {
   darkMode: boolean;
   backgroundImage: string | null;
+  backgroundBlur: number;
+  backgroundScale: number;
 }
 
 const DEFAULT_THEME: ThemeSettings = {
   darkMode: false,
   backgroundImage: null,
+  backgroundBlur: 0,
+  backgroundScale: 100,
 };
-
-// Predefined background images
-export const BACKGROUND_IMAGES = [
-  { id: "none", name: "None", value: null },
-  {
-    id: "mountain",
-    name: "Mountains",
-    value:
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "forest",
-    name: "Forest",
-    value:
-      "https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "cityscape",
-    name: "City",
-    value:
-      "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2144&auto=format&fit=crop",
-  },
-  {
-    id: "desert",
-    name: "Desert",
-    value:
-      "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "night_sky",
-    name: "Starry Sky",
-    value: "https://images3.alphacoders.com/114/1142030.jpg",
-  },
-  {
-    id: "lake",
-    name: "Lake",
-    value:
-      "https://images.unsplash.com/photo-1511316695145-4992006ffddb?q=80&w=2071&auto=format&fit=crop",
-  },
-  {
-    id: "winter",
-    name: "Winter",
-    value:
-      "https://images.unsplash.com/photo-1491002052546-bf38f186af56?q=80&w=2108&auto=format&fit=crop",
-  },
-  {
-    id: "aurora",
-    name: "Northern Lights",
-    value:
-      "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "sunset",
-    name: "Sunset",
-    value:
-      "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?q=80&w=2072&auto=format&fit=crop",
-  },
-];
 
 const useTheme = () => {
   const queryClient = useQueryClient();
@@ -120,11 +66,31 @@ const useTheme = () => {
     }));
   };
 
+  // Set background blur (0-20 px)
+  const setBackgroundBlur = (blur: number) => {
+    queryClient.setQueryData<ThemeSettings>(["themeSettings"], (old) => ({
+      ...old!,
+      backgroundBlur: Math.min(Math.max(0, blur), 20),
+    }));
+  };
+
+  // Set background scale (50-150%)
+  const setBackgroundScale = (scale: number) => {
+    queryClient.setQueryData<ThemeSettings>(["themeSettings"], (old) => ({
+      ...old!,
+      backgroundScale: Math.min(Math.max(50, scale), 150),
+    }));
+  };
+
   return {
     darkMode: theme.darkMode,
     backgroundImage: theme.backgroundImage,
+    backgroundBlur: theme.backgroundBlur,
+    backgroundScale: theme.backgroundScale,
     switchTheme,
     setBackgroundImage,
+    setBackgroundBlur,
+    setBackgroundScale,
   };
 };
 

@@ -9,13 +9,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import useTheme, { BACKGROUND_IMAGES } from "@/hooks/use-theme";
-import { ImageIcon, MoonIcon, SunIcon } from "lucide-react";
-import React from "react";
+import useTheme from "@/hooks/use-theme";
+import { ImageIcon, MoonIcon, PlusIcon, SunIcon } from "lucide-react";
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Label } from "@/components/ui/label";
 
 const ThemeSwitcher: React.FC = () => {
-  const { darkMode, backgroundImage, switchTheme, setBackgroundImage } =
-    useTheme();
+  const {
+    darkMode,
+    backgroundImage,
+    backgroundBlur,
+    backgroundScale,
+    switchTheme,
+    setBackgroundImage,
+    setBackgroundBlur,
+    setBackgroundScale,
+  } = useTheme();
+
+  const [customUrl, setCustomUrl] = useState(backgroundImage || "");
+
+  const handleCustomUrlSubmit = () => {
+    if (customUrl.trim()) {
+      setBackgroundImage(customUrl.trim());
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -33,8 +52,8 @@ const ThemeSwitcher: React.FC = () => {
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Apparence</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-64">
+        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         {/* Theme Toggle */}
@@ -58,21 +77,75 @@ const ThemeSwitcher: React.FC = () => {
         <DropdownMenuLabel>Background Image</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {/* Background Image Selection */}
-        <DropdownMenuGroup className="max-h-[200px] overflow-y-auto">
-          {BACKGROUND_IMAGES.map((bg) => (
-            <DropdownMenuItem
-              key={bg.id}
-              onClick={() => setBackgroundImage(bg.value)}
-              className={
-                backgroundImage === bg.value ? "bg-accent font-medium" : ""
-              }
+        {/* Custom URL Input */}
+
+        <div className="px-2 py-2" onClick={(e) => e.stopPropagation()}>
+          <div className="flex gap-2 mb-2">
+            <Input
+              value={customUrl}
+              onChange={(e) => setCustomUrl(e.target.value)}
+              placeholder="Enter image URL"
+              className="flex-1 h-8"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleCustomUrlSubmit();
+              }}
             >
-              <ImageIcon className="mr-2 h-4 w-4" />
-              <span>{bg.name}</span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuGroup>
+              Add
+            </Button>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Cancel
+          </Button>
+        </div>
+
+        {backgroundImage && (
+          <>
+            <DropdownMenuSeparator />
+            <div
+              className="px-2 py-2 space-y-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <Label className="text-xs">Blur: {backgroundBlur}px</Label>
+                </div>
+                <Slider
+                  value={[backgroundBlur]}
+                  min={0}
+                  max={20}
+                  step={1}
+                  onValueChange={(values) => setBackgroundBlur(values[0])}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <Label className="text-xs">Scale: {backgroundScale}%</Label>
+                </div>
+                <Slider
+                  value={[backgroundScale]}
+                  min={50}
+                  max={150}
+                  step={5}
+                  onValueChange={(values) => setBackgroundScale(values[0])}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            </div>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
