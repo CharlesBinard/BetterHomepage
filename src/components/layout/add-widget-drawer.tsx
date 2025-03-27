@@ -62,7 +62,7 @@ const AddWidgetDrawer = () => {
         postcodes: ["75001"],
       },
       className:
-        "bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl rounded-2xl p-4 w-full h-full text-white",
+        "bg-white/90 dark:bg-gray-900/90 shadow-sm rounded-3xl p-4 w-full h-full",
       position: {
         x: 10,
         y: 10,
@@ -133,13 +133,13 @@ const AddWidgetDrawer = () => {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
       },
     },
   };
 
   const item = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 10, opacity: 0 },
     show: { y: 0, opacity: 1 },
   };
 
@@ -147,26 +147,26 @@ const AddWidgetDrawer = () => {
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm hover:bg-white dark:hover:bg-gray-700 transition-all duration-300"
+          className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-sm hover:bg-white/90 dark:hover:bg-gray-900/90 transition-all duration-200"
         >
-          <SquarePlus className="h-5 w-5 text-primary" />
+          <SquarePlus className="h-5 w-5 text-gray-700 dark:text-gray-300" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="bg-gradient-to-b from-background/80 to-background backdrop-blur-md border-t border-border/40">
+      <DrawerContent className="bg-white/95 dark:bg-gray-950/95 backdrop-blur-2xl border-t border-gray-200/20 dark:border-gray-800/20">
         <div className="mx-auto w-full max-w-5xl">
           <DrawerHeader>
-            <DrawerTitle className="text-4xl font-extrabold text-center bg-gradient-to-r from-primary to-blue-500 bg-clip-text text-transparent pb-2">
+            <DrawerTitle className="text-3xl font-medium text-center text-gray-900 dark:text-white">
               Add New Widget
             </DrawerTitle>
-            <DrawerDescription className="text-center text-muted-foreground text-lg max-w-lg mx-auto">
-              Customize your homepage with these powerful widgets
+            <DrawerDescription className="text-center text-gray-500 dark:text-gray-400 text-base max-w-lg mx-auto mt-1">
+              Customize your homepage with widgets
             </DrawerDescription>
           </DrawerHeader>
-          <ScrollArea className="p-6 h-[calc(100vh-10rem)]">
+          <ScrollArea className="px-6 pb-8 h-[calc(100vh-8rem)]">
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
               variants={container}
               initial="hidden"
               animate="show"
@@ -175,45 +175,34 @@ const AddWidgetDrawer = () => {
                 <motion.div
                   key={widget.type}
                   variants={item}
-                  className="relative group overflow-hidden rounded-xl backdrop-blur-sm bg-white/10 dark:bg-gray-800/20 border border-border/50 hover:border-primary/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="relative group overflow-hidden rounded-2xl bg-white/50 dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  {/* Background gradient overlay */}
-                  <div
-                    className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-300"
-                    style={{
-                      background: `linear-gradient(135deg, ${widget.color}40 0%, transparent 100%)`,
-                    }}
-                  />
-
                   <div className="flex flex-col h-full p-5">
-                    <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center mb-3">
                       <div
-                        className="flex items-center justify-center w-12 h-12 rounded-lg shadow-md transform group-hover:scale-110 transition-transform duration-300"
+                        className="flex items-center justify-center w-10 h-10 rounded-full mr-3"
                         style={{
-                          background: `linear-gradient(135deg, ${
-                            widget.color
-                          } 0%, ${adjustColor(widget.color, -20)} 100%)`,
+                          backgroundColor: `${widget.color}20`,
+                          color: widget.color,
                         }}
                       >
-                        <widget.icon className="w-6 h-6 text-white" />
+                        <widget.icon className="w-5 h-5" />
                       </div>
-                      <h3 className="text-xl font-bold">{widget.title}</h3>
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                        {widget.title}
+                      </h3>
                     </div>
 
-                    <p className="text-sm text-muted-foreground mb-5 flex-grow">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 flex-grow">
                       {widget.description}
                     </p>
 
                     <Button
                       onClick={() => handleAddWidget(widget.type)}
-                      className="w-full group-hover:bg-primary group-hover:text-white transition-colors duration-300 z-200"
+                      className="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white border-0 transition-colors duration-200"
                       variant="outline"
-                      style={{
-                        borderColor: widget.color,
-                        color: widget.color,
-                      }}
                     >
-                      <span>Add Widget</span>
+                      <span>Add</span>
                       <SquarePlus className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
@@ -226,23 +215,28 @@ const AddWidgetDrawer = () => {
               variants={item}
               initial="hidden"
               animate="show"
-              className="mt-10"
+              className="mt-8"
             >
-              <Card className="backdrop-blur-sm bg-white/10 dark:bg-gray-800/20 border border-border/50">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 shadow-md">
-                      <Code className="w-5 h-5 text-white" />
+              <Card className="bg-white/50 dark:bg-gray-900/50 border border-gray-200/50 dark:border-gray-800/50 shadow-sm rounded-2xl overflow-hidden">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800">
+                      <Code className="w-4 h-4 text-gray-700 dark:text-gray-300" />
                     </div>
-                    <CardTitle>Import Widget from JSON</CardTitle>
+                    <CardTitle className="text-lg font-medium text-gray-900 dark:text-white">
+                      Import Widget from JSON
+                    </CardTitle>
                   </div>
-                  <CardDescription>
+                  <CardDescription className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Paste a widget configuration JSON to create a custom widget
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   {jsonError && (
-                    <Alert variant="destructive" className="mb-4">
+                    <Alert
+                      variant="destructive"
+                      className="mb-4 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800/30 text-red-800 dark:text-red-300 rounded-xl"
+                    >
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Error</AlertTitle>
                       <AlertDescription>{jsonError}</AlertDescription>
@@ -251,14 +245,17 @@ const AddWidgetDrawer = () => {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">
-                        <Label htmlFor="json-input">
+                        <Label
+                          htmlFor="json-input"
+                          className="text-sm text-gray-700 dark:text-gray-300"
+                        >
                           Widget JSON Configuration
                         </Label>
                         <Button
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
                           onClick={loadExampleJson}
-                          className="text-xs"
+                          className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white h-7"
                         >
                           Load Example
                         </Button>
@@ -275,12 +272,12 @@ const AddWidgetDrawer = () => {
                         }`}
                         value={jsonInput}
                         onChange={(e) => setJsonInput(e.target.value)}
-                        className="min-h-32 font-mono text-sm"
+                        className="min-h-32 font-mono text-sm bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-800 rounded-xl"
                       />
                     </div>
                     <Button
                       onClick={handleJsonImport}
-                      className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white"
+                      className="w-full bg-gray-900 dark:bg-white hover:bg-black dark:hover:bg-gray-200 text-white dark:text-gray-900 rounded-xl h-10"
                     >
                       Import Widget
                     </Button>
@@ -294,24 +291,5 @@ const AddWidgetDrawer = () => {
     </Drawer>
   );
 };
-
-// Helper function to adjust color brightness
-function adjustColor(color: string, amount: number): string {
-  // This is a simplified approach - works with hex colors
-  if (color.startsWith("#")) {
-    color = color.slice(1);
-  }
-
-  const num = parseInt(color, 16);
-  let r = (num >> 16) + amount;
-  let g = ((num >> 8) & 0x00ff) + amount;
-  let b = (num & 0x0000ff) + amount;
-
-  r = Math.min(Math.max(0, r), 255);
-  g = Math.min(Math.max(0, g), 255);
-  b = Math.min(Math.max(0, b), 255);
-
-  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`;
-}
 
 export default AddWidgetDrawer;
